@@ -55,8 +55,6 @@ The core of the project is the notebook `experiments.ipynb`. It contains:
 We aim to:
 - [ ] Refactor the code into a reproducible and modular pipeline  
 - [ ] Add documentation and usage instructions  
-- [ ] Enable easier integration of new concepts and data sources  
-- [ ] Expand the system to include bias diagnostics and cultural sensitivity validation
 
 ---
 
