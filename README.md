@@ -1,6 +1,6 @@
 # Automated Fine-Tuning of Diffusion Models for Learning Underrepresented Concepts from Web-Scraped Data
 
-This repository contains the scripts, data, and experimental outputs associated with the paper **"Automated Fine-Tuning of Diffusion Models for Learning Underrepresented Concepts from Web-Scraped Data"** (Submitted to IEEE Computer Graphics and Applications). In this work, we present an automated pipeline to fine-tune diffusion-based models on culturally specific visual concepts that are typically underrepresented in mainstream datasets.
+This repository contains the scripts, data, and experimental outputs associated with the paper **"Automated Fine-Tuning of Diffusion Models for Learning Underrepresented Concepts from Web-Scraped Data"** (Submitted to Multimedia Tools and Applications). In this work, we present an automated pipeline to fine-tune diffusion-based models on culturally specific visual concepts that are typically underrepresented in mainstream datasets.
 
 > ⚠️ **Disclaimer:** This repository is **not organized with reproducibility as its main goal**. It serves as a **record of experiments** conducted during the project. We plan to refactor and release a cleaner, fully documented version of the codebase in the future.
 
