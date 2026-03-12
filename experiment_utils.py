@@ -38,12 +38,24 @@ VISUAL_DESCRIPTIONS = {
     "saci": "A one-legged trickster from Brazilian folklore, with dark skin, wearing a red cap and smoking a pipe.",
 }
 
+CONCEPT_GROUPS = {
+    "cuscuz": "food",
+    "lokum": "food",
+    "pacoca": "food",
+    "patua": "artifact_object_clothing",
+    "jian": "artifact_object_clothing",
+    "chamanto": "artifact_object_clothing",
+    "saci": "folklore_being",
+    "chaneques": "folklore_being",
+}
+
 
 @dataclass(frozen=True)
 class Concept:
     name: str
     folder: Path
     safe_name: str
+    group: str
     prompt_base: str
     visual_description: str
 
@@ -79,6 +91,7 @@ def discover_concepts(data_root: Path, requested: list[str] | None) -> list[Conc
                 name=folder.name,
                 folder=folder,
                 safe_name=safe_name,
+                group=CONCEPT_GROUPS.get(safe_name, "other"),
                 prompt_base=prompt_base,
                 visual_description=visual_description,
             )
@@ -228,6 +241,7 @@ def evaluate_generated_folder(
     return {
         "concept": concept.name,
         "concept_safe": concept.safe_name,
+        "group": concept.group,
         "method": method_label,
         "condition": condition_label,
         "folder": str(generated_folder),
@@ -245,6 +259,33 @@ def evaluate_generated_folder(
         "kid_ci95_low": kid_stats["ci95_low"],
         "kid_ci95_high": kid_stats["ci95_high"],
     }
+
+
+def aggregate_metrics_by_group(rows: list[dict[str, object]], bootstrap_samples: int, seed: int) -> list[dict[str, object]]:
+    grouped: dict[tuple[str, str, str], list[dict[str, object]]] = {}
+    for row in rows:
+        key = (str(row["group"]), str(row["method"]), str(row["condition"]))
+        grouped.setdefault(key, []).append(row)
+
+    aggregated_rows: list[dict[str, object]] = []
+    metric_names = ["clip", "fid", "kid"]
+    for (group, method, condition), group_rows in sorted(grouped.items()):
+        aggregated = {
+            "group": group,
+            "method": method,
+            "condition": condition,
+            "num_concepts": len(group_rows),
+            "total_sample_count": int(sum(int(row["sample_count"]) for row in group_rows)),
+        }
+        for metric_index, metric_name in enumerate(metric_names):
+            values = [float(row[f"{metric_name}_mean"]) for row in group_rows]
+            stats = bootstrap_summary(values, bootstrap_samples, seed + metric_index)
+            aggregated[f"{metric_name}_group_mean"] = stats["mean"]
+            aggregated[f"{metric_name}_group_std"] = stats["std"]
+            aggregated[f"{metric_name}_group_ci95_low"] = stats["ci95_low"]
+            aggregated[f"{metric_name}_group_ci95_high"] = stats["ci95_high"]
+        aggregated_rows.append(aggregated)
+    return aggregated_rows
 
 
 def build_contact_sheet(rows: list[tuple[str, list[Path]]], destination: Path, tile_size: int = 256) -> None:

@@ -11,6 +11,7 @@ from diffusers import DiffusionPipeline, LCMScheduler, UNet2DConditionModel
 
 from experiment_utils import (
     Concept,
+    aggregate_metrics_by_group,
     create_human_eval_package,
     create_qualitative_sheet,
     discover_concepts,
@@ -321,6 +322,7 @@ def main() -> None:
     metric_fields = [
         "concept",
         "concept_safe",
+        "group",
         "method",
         "condition",
         "folder",
@@ -340,6 +342,35 @@ def main() -> None:
     ]
     write_csv(args.output_root / "metrics_dreambooth.csv", metric_fields, main_rows)
     write_csv(args.output_root / "metrics_checkpoints_dreambooth.csv", metric_fields, checkpoint_rows)
+    group_metric_fields = [
+        "group",
+        "method",
+        "condition",
+        "num_concepts",
+        "total_sample_count",
+        "clip_group_mean",
+        "clip_group_std",
+        "clip_group_ci95_low",
+        "clip_group_ci95_high",
+        "fid_group_mean",
+        "fid_group_std",
+        "fid_group_ci95_low",
+        "fid_group_ci95_high",
+        "kid_group_mean",
+        "kid_group_std",
+        "kid_group_ci95_low",
+        "kid_group_ci95_high",
+    ]
+    write_csv(
+        args.output_root / "metrics_groupwise_dreambooth.csv",
+        group_metric_fields,
+        aggregate_metrics_by_group(main_rows, args.bootstrap_samples, args.metric_seed + 100),
+    )
+    write_csv(
+        args.output_root / "metrics_groupwise_checkpoints_dreambooth.csv",
+        group_metric_fields,
+        aggregate_metrics_by_group(checkpoint_rows, args.bootstrap_samples, args.metric_seed + 200),
+    )
     create_human_eval_package(
         concepts=concepts,
         condition_map=human_eval_conditions,
