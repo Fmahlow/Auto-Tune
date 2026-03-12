@@ -26,6 +26,37 @@ def run_cmd(cmd: list[str]) -> None:
     subprocess.run(cmd, check=True)
 
 
+def resolve_train_script(user_path: Path | None, relative_script: str) -> Path:
+    if user_path is not None:
+        if user_path.exists():
+            return user_path
+        raise FileNotFoundError(f"Training script not found: {user_path}")
+
+    repo_candidates = []
+    env_repo = os.environ.get("DIFFUSERS_REPO")
+    if env_repo:
+        repo_candidates.append(Path(env_repo))
+    repo_candidates.extend(
+        [
+            Path.cwd() / "diffusers",
+            Path("/workspace/diffusers"),
+            Path("/workspace") / "diffusers",
+            Path.home() / "diffusers",
+        ]
+    )
+
+    for repo in repo_candidates:
+        candidate = repo / relative_script
+        if candidate.exists():
+            return candidate
+
+    searched = ", ".join(str(repo / relative_script) for repo in repo_candidates)
+    raise FileNotFoundError(
+        "Could not locate the diffusers training script. "
+        f"Pass --train-script explicitly or set DIFFUSERS_REPO. Searched: {searched}"
+    )
+
+
 def import_diffusers_components():
     try:
         from diffusers import DiffusionPipeline, LCMScheduler, UNet2DConditionModel
@@ -153,7 +184,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--train-script",
         type=Path,
-        default=Path("/workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py"),
+        default=None,
     )
     parser.add_argument("--concepts", nargs="*", default=None)
     parser.add_argument("--base-model", default="stabilityai/stable-diffusion-xl-base-1.0")
@@ -208,15 +239,17 @@ def main() -> None:
     train_dirs = {concept.safe_name: args.output_root / "training_runs" / concept.safe_name for concept in concepts}
 
     if not args.skip_train:
-        if not args.train_script.exists():
-            raise FileNotFoundError(f"Training script not found: {args.train_script}")
+        train_script = resolve_train_script(
+            args.train_script, "examples/dreambooth/train_dreambooth_lora_sdxl.py"
+        )
+        progress.log(f"Using training script: {train_script}")
         for concept in concepts:
             progress.set_stage("training", concept.name, "starting")
             progress.log(f"Training {concept.name}")
             train_dirs[concept.safe_name] = train_dreambooth_lora(
                 concept=concept,
                 output_root=args.output_root,
-                train_script=args.train_script,
+                train_script=train_script,
                 model_name=args.base_model,
                 vae_path=args.vae_path,
                 resolution=args.resolution,
