@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import csv
+import json
 import math
 import random
 import re
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -105,6 +107,69 @@ def write_csv(path: Path, fieldnames: list[str], rows: list[dict[str, object]]) 
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
+
+
+class ProgressTracker:
+    def __init__(self, output_root: Path, run_name: str, total_steps: int) -> None:
+        self.output_root = output_root
+        self.run_name = run_name
+        self.total_steps = max(total_steps, 1)
+        self.completed_steps = 0
+        self.current_stage = "initializing"
+        self.current_concept = ""
+        self.current_detail = ""
+        self.started_at = time.time()
+        self.progress_path = output_root / "progress.json"
+        self.log_path = output_root / "progress.log"
+        self.output_root.mkdir(parents=True, exist_ok=True)
+        self._flush()
+
+    def set_stage(self, stage: str, concept: str = "", detail: str = "") -> None:
+        self.current_stage = stage
+        self.current_concept = concept
+        self.current_detail = detail
+        self._flush()
+
+    def advance(self, amount: int = 1, stage: str | None = None, concept: str | None = None, detail: str | None = None) -> None:
+        self.completed_steps = min(self.total_steps, self.completed_steps + amount)
+        if stage is not None:
+            self.current_stage = stage
+        if concept is not None:
+            self.current_concept = concept
+        if detail is not None:
+            self.current_detail = detail
+        self._flush()
+
+    def log(self, message: str) -> None:
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        with self.log_path.open("a") as handle:
+            handle.write(f"[{timestamp}] {message}\n")
+
+    def complete(self) -> None:
+        self.completed_steps = self.total_steps
+        self.current_stage = "completed"
+        self.current_detail = "finished"
+        self._flush()
+
+    def _flush(self) -> None:
+        elapsed = max(time.time() - self.started_at, 0.0)
+        fraction = self.completed_steps / self.total_steps
+        eta_seconds = None
+        if self.completed_steps > 0 and self.completed_steps < self.total_steps:
+            eta_seconds = elapsed * (self.total_steps - self.completed_steps) / self.completed_steps
+        payload = {
+            "run_name": self.run_name,
+            "current_stage": self.current_stage,
+            "current_concept": self.current_concept,
+            "current_detail": self.current_detail,
+            "completed_steps": self.completed_steps,
+            "total_steps": self.total_steps,
+            "progress_fraction": fraction,
+            "progress_percent": round(fraction * 100.0, 2),
+            "elapsed_seconds": round(elapsed, 2),
+            "eta_seconds": None if eta_seconds is None else round(eta_seconds, 2),
+        }
+        self.progress_path.write_text(json.dumps(payload, indent=2) + "\n")
 
 
 def list_image_files(folder: Path) -> list[Path]:

@@ -1,0 +1,417 @@
+%Version 3.1 December 2024
+% See section 11 of the User Manual for version history
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%\documentclass[referee,sn-basic]{sn-jnl}% referee option is meant for double line spacing
+
+%%=======================================================%%
+%% to print line numbers in the margin use lineno option %%
+%%=======================================================%%
+
+%%\documentclass[lineno,pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+
+%%=========================================================================================%%
+%% the documentclass is set to pdflatex as default. You can delete it if not appropriate.  %%
+%%=========================================================================================%%
+
+%%\documentclass[sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+
+%%Note: the following reference styles support Namedate and Numbered referencing. By default the style follows the most common style. To switch between the options you can add or remove Numbered in the optional parenthesis. 
+%%The option is available for: sn-basic.bst, sn-chicago.bst%  
+ 
+%%\documentclass[pdflatex,sn-nature]{sn-jnl}% Style for submissions to Nature Portfolio journals
+%%\documentclass[pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
+%%\documentclass[pdflatex,sn-mathphys-ay]{sn-jnl}% Math and Physical Sciences Author Year Reference Style
+%%\documentclass[pdflatex,sn-aps]{sn-jnl}% American Physical Society (APS) Reference Style
+%%\documentclass[pdflatex,sn-vancouver-num]{sn-jnl}% Vancouver Numbered Reference Style
+%%\documentclass[pdflatex,sn-vancouver-ay]{sn-jnl}% Vancouver Author Year Reference Style
+%%\documentclass[pdflatex,sn-apa]{sn-jnl}% APA Reference Style
+%%\documentclass[pdflatex,sn-chicago]{sn-jnl}% Chicago-based Humanities Reference Style
+
+%%%% Standard Packages
+%%<additional latex packages if required can be included here>
+
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{url}
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%%%%
+
+%%%%%=============================================================================%%%%
+%%%%  Remarks: This template is provided to aid authors with the preparation
+%%%%  of original research articles intended for submission to journals published 
+%%%%  by Springer Nature. The guidance has been prepared in partnership with 
+%%%%  production teams to conform to Springer Nature technical requirements. 
+%%%%  Editorial and presentation requirements differ among journal portfolios and 
+%%%%  research disciplines. You may find sections in this template are irrelevant 
+%%%%  to your work and are empowered to omit any such section if allowed by the 
+%%%%  journal you intend to submit to. The submission guidelines and policies 
+%%%%  of the journal take precedence. A detailed User Manual is available in the 
+%%%%  template package for technical guidance.
+%%%%%=============================================================================%%%%
+
+%% as per the requirement new theorem styles can be included as shown below
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
+\newtheorem{proposition}[theorem]{Proposition}% 
+%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+
+\raggedbottom
+%%\unnumbered% uncomment this for unnumbered level heads
+
+\begin{document}
+
+\title[Article Title]{Automated Fine-Tuning of Diffusion Models for Learning Underrepresented Concepts from Web-Scraped Data}
+
+%%=============================================================%%
+%% GivenName	-> \fnm{Joergen W.}
+%% Particle	-> \spfx{van der} -> surname prefix
+%% FamilyName	-> \sur{Ploeg}
+%% Suffix	-> \sfx{IV}
+%% \author*[1,2]{\fnm{Joergen W.} \spfx{van der} \sur{Ploeg} 
+%%  \sfx{IV}}\email{iauthor@gmail.com}
+%%=============================================================%%
+
+\author*[1]{\fnm{Felipe} \sur{Mahlow}}\email{f.mahlow@unesp.br}
+
+\author[1]{\fnm{Renato} \sur{Dias de Souza}}\email{renato.dias@unesp.br}
+
+
+\author[1]{\fnm{João Paulo} \sur{Papa}}\email{joao.papa@unesp.br}
+
+
+\author[1]{\fnm{Kelton Augusto} \sur{Pontara da Costa}}\email{kelton.costa@unesp.br}
+
+
+\affil*[1]{\orgdiv{Faculty of Sciences}, \orgname{Sao Paulo State University}, \orgaddress{\street{Av. Eng. Luís Edmundo Carrijo Coube, 14-01}, \city{Bauru}, \postcode{17033-360}, \state{SP}, \country{Brazil}}}
+
+
+%%==================================%%
+%% Sample for unstructured abstract %%
+%%==================================%%
+
+\abstract{Despite significant advancements in image generation models, they still struggle to accurately depict culturally specific concepts, such as regional languages, landscapes, mythology, and artistic traditions. While these models excel at generating common objects, they often lack the necessary adaptability to represent nuanced cultural elements. This paper introduces an automated pipeline that streamlines the fine-tuning process, enabling the customization of generative models for user-defined prompts. By integrating web scraping, model training, and image generation, our approach facilitates the incorporation of culturally rich and diverse visual concepts into AI-generated imagery. This automated framework provides researchers and practitioners with a powerful tool to enhance the representation of underrepresented cultures, contributing to a more inclusive and diverse landscape in generative AI.}
+
+%%================================%%
+%% Sample for structured abstract %%
+%%================================%%
+
+% \abstract{\textbf{Purpose:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.
+% 
+% \textbf{Methods:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.
+% 
+% \textbf{Results:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.
+% 
+% \textbf{Conclusion:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.}
+
+\keywords{Text-to-Image Diffusion Models, Few-Shot Fine-Tuning, Cultural Bias Mitigation, Image Synthesis}
+
+%%\pacs[JEL Classification]{D8, H51}
+
+%%\pacs[MSC Classification]{35A01, 65L10, 65L12, 65L20, 65L70}
+
+\maketitle
+
+\section{Introduction}\label{sec1}
+
+Recent advancements in generative models, such as diffusion-based models and Generative Adversarial Networks (GANs) \cite{goodfellow2014generativeadversarialnetworks}, have significantly improved the quality and flexibility of image generation. A particularly efficient variation, Latent Diffusion Models (LDMs) \cite{rombach2021highresolution}, operates in a compressed latent space, optimizing computational efficiency while maintaining visual realism. Among the most notable image generation models are DALL-E~\cite{betker2023improving}, MidJourney~\footnote{https://www.midjourney.com/home}, and Stable Diffusion~\cite{rombach2022high}, which leverage sophisticated attention mechanisms and latent representations to synthesize highly detailed images. Concurrently, GANs~\cite{goodfellow2016deep} continue to play a crucial role in generating high-fidelity images by utilizing an adversarial framework in which a generator and a discriminator compete to refine image quality.  
+
+Despite these technological advancements, generative models are trained on large-scale datasets that often reflect societal biases and fail to adequately represent less common or culturally specific concepts \cite{navigli2023biases}. Many datasets used for training are predominantly composed of Western-centric imagery, leading to a lack of diversity in the generated outputs \cite{NEURIPS2024_18c669b8}. Consequently, these models struggle to accurately depict regional languages, landscapes, mythology, and cultural artifacts~\cite{pampas}. This limitation not only affects the accuracy of generated images but also reinforces existing imbalances in digital representation.  Given the widespread adoption of AI-generated imagery, it becomes essential to develop strategies that mitigate biases and promote a more inclusive representation of underrepresented concepts \cite{sci6010003}. Addressing these disparities is crucial for enhancing the applicability of generative AI in fields that demand cultural sensitivity, such as historical preservation, education, and digital art. 
+
+Fine-tuning techniques have emerged as a powerful solution, enabling models to adapt to new concepts using smaller, domain-specific datasets. Among existing fine-tuning methods, DreamBooth~\cite{dreambooth} and Textual Inversion~\cite{textualinversion} have demonstrated significant potential for teaching generative models new visual concepts. These approaches enable models to generate images of specific objects, styles, or subjects with minimal training data. However, fine-tuning a model manually remains a time-consuming and computationally expensive process, requiring expertise in dataset curation and model optimization.  
+
+To overcome these challenges, this paper proposes an automated pipeline for fine-tuning a text-to-image diffusion model, enabling users to efficiently teach models new concepts with minimal manual intervention. Our approach integrates web scraping—a technique for automatically gathering images from the internet—combined with fine-tuning strategies such as Low-Rank Adaptation (LoRA)~\cite{hu2021loralowrankadaptationlarge}. LoRA reduces the number of trainable parameters in the model, making fine-tuning more efficient while preserving the original model's generalization capabilities. Additionally, we utilize Latent Consistency Models (LCMs)~\cite{luo2023latent} to accelerate the image generation process, significantly reducing the number of inference steps required to produce high-quality outputs. By automating both dataset collection and model fine-tuning, we aim to make generative AI more accessible and customizable for diverse applications.  
+
+Our study focuses on fine-tuning generative models to learn concepts that are underrepresented in large-scale datasets, particularly culturally specific elements that mainstream models struggle to depict accurately. To evaluate the effectiveness of our approach, we selected eight distinct cultural concepts from various countries, each representing unique aspects of local traditions, folklore, and food. These concepts serve as test cases for assessing how well our fine-tuned models can generate images that reflect cultural authenticity while overcoming the inherent biases present in pre-trained generative models. Our evaluation process consisted of both qualitative and quantitative analyses. First, we conducted a qualitative assessment to identify biases present in the base model and analyze the patterns observed before and after fine-tuning. This step allowed us to examine common distortions, omissions, or misrepresentations of culturally specific elements, providing insights into how the model initially struggled with underrepresented concepts and how fine-tuning influenced its generative behavior.
+
+To complement this analysis, we employed quantitative metrics to systematically measure improvements during fine-tuning. Specifically, we used CLIP Score \cite{hessel2021clipscore} to evaluate the semantic alignment between generated images and their corresponding textual descriptions, ensuring that the model effectively captured the intended cultural concepts. Additionally, we computed the Fréchet Inception Distance (FID) \cite{heusel2018ganstrainedtimescaleupdate} to assess the visual quality and diversity of the generated images by comparing their feature distributions with those of real images from our dataset. By tracking these metrics throughout the training process, we ensured that fine-tuning led to meaningful improvements in both semantic coherence and image fidelity. We further investigate the impact of training duration on fine-tuning effectiveness, analyzing the optimal number of steps required for models to learn underrepresented concepts efficiently. Through controlled experiments, we demonstrate that most improvements occur within the first two thousand training steps, allowing us to optimize computational costs without compromising image quality.
+
+
+\textbf{Main Contributions}: This paper presents an automated framework for fine-tuning text-to-image diffusion models using web-scraped datasets, removing the need for manual data collection. We assess the models' effectiveness in generating images of underrepresented concepts using qualitative and quantitative metrics. We also identify the optimal fine-tuning steps for efficiency, balancing computational cost with performance. Latent Consistency Models (LCMs) are integrated to reduce the computational demands of high-quality image generation. Additionally, we explore biases in generative models, outlining their limitations and suggesting ways to improve cultural representation.
+
+This paper is structured as follows: Section~\ref{related_work} reviews related work on generative models, fine-tuning techniques. Section~\ref{methods} presents the methodology, detailing the web scraping process, dataset collection, model fine-tuning, inference pipeline with LCMs, and the metrics utilized. Section~\ref{results} discusses the experimental results, both from a qualitative and quantitative perspective. Finally, Section~\ref{conclusions} concludes the paper by summarizing key findings, evaluating the effectiveness of the proposed pipeline, and outlining potential directions for future research. 
+
+\section{Related Work}
+\label{related_work}
+
+\textbf{Diffusion Models:} One of the most notable examples is Stable Diffusion \cite{rombach2022high}, where the diffusion process takes place in the latent space instead of the pixel space. In this architecture, text embeddings from a pre-trained CLIP \cite{clip} model are fed into a UNet enhanced with cross-attention. Stable Diffusion XL \cite{sdxl} further improves upon this by incorporating a more robust UNet and a larger CLIP text encoder, refining text-to-image conditioning. Other models, such as DALL-E 3 \cite{betker2023improving}, achieve comparable results by using enhanced synthetic captions to boost CLIP Score performance. \textcolor{blue}{The recent FLUX.1 Kontext \cite{labs2025flux1kontextflowmatching} presents a flow‐matching model that unifies image generation and editing in latent space, achieving high consistency across multiple iterations and interactive speeds. The Diffusion Visual Programmer (DVP) \cite{han2024imagetranslationdiffusionvisual} is a neuro-symbolic image translation framework that incorporates a conditionally flexible diffusion model with GPT-based visual programming to perform “where-then-what” edits in a controllable, explainable, and high-fidelity manner.}
+
+\textcolor{blue}{In video, diffusion models with a 3D causal VAE and an expert transformer (CogVideoX) \cite{yang2025cogvideoxtexttovideodiffusionmodels} produce long-duration (up to 10 s at 16 fps and 768×1360) coherent, semantically aligned, high-fidelity videos, achieving state-of-the-art performance. And for text-to-video retrieval, DITS \cite{NEURIPS2024_0731f0e6} is a diffusion-inspired truncated sampler that progressively aligns text and video embeddings with a contrastive loss to model the multimodal gap, achieving state-of-the-art text-video retrieval performance.}
+
+
+\textbf{Fine-tuning:} Alongside the advancements in large-scale architectures, fine-tuning techniques have gained prominence for adapting text-to-image models to specific domains or personalized subjects. DreamBooth \cite{dreambooth} and Textual Inversion \cite{textualinversion} are particularly effective in few-shot scenarios, enabling personalized generation from very limited samples. New approaches such as Specialist Diffusion \cite{Specialist-Diffusion} and Object-Driven One-Shot Fine-Tuning with Prototypical Embedding \cite{lu2024object} aim to further reduce overfitting and improve fidelity. These methods facilitate adaptation to novel objects, styles, and even cultural elements via specialized fine-tuning strategies. \textcolor{blue}{In Large Language Models (LLMs), APROMPT \cite{wang2023aprompt} introduces trainable query, key, and value prompts directly into the attention mechanism—beyond traditional input-level prompt tuning—enabling efficient and highly effective fine-tuning with fewer parameters.}
+
+
+
+
+%\textbf{Other methods:} Recently, various techniques have been proposed to enhance the control and quality of diffusion models in the image generation process. Among these, adapters stand out, enabling the incorporation of additional conditional controls, as demonstrated by Zhang et al. (2023) \cite{zhang2023adding}, who introduced adapters for text-to-image diffusion models, allowing for more precise manipulation of generated outputs. Another relevant approach is compositional generation, explored by Du et al. (2023) \cite{du2023reduce} and Liu et al. (2022) \cite{liu2022compositional}, which combines multiple diffusion models or employs energy-based techniques to create images with greater complexity and quality. Additionally, classifier-based guidance, proposed by Dhariwal and Nichol (2021) \cite{dhariwal2021diffusion}, has proven effective in improving the fidelity of generated images, while classifier-free guidance, introduced by Ho and Salimans (2021) \cite{ho2022classifier}, offers greater autonomy in the generation process, aligning outputs more closely with user intentions. These approaches have significantly contributed to the advancement of diffusion models, enabling greater control and quality in image generation applications.
+
+While the methods discussed above are highly impactful in their respective areas, our approach stands out for its accessibility and cultural focus. Unlike previous techniques that require technical expertise, our pipeline automates dataset creation and fine-tuning, making it usable even by non-experts. Moreover, by targeting niche applications and cultural preservation, our method enables the integration of underrepresented visual identities. This expands the inclusivity and contextual relevance of generative models, allowing them to reflect a broader spectrum of human creativity.
+
+\section{Methodology}
+\label{methods}
+
+This section details the methodology employed to develop and implement the pipeline. The methodology comprises multiple stages, including image scraping, model training, and image generation, facilitated by a web-based user interface. Additionally, we present the criteria used for selecting the images that serve as test cases in our study and, finally, provide the theoretical foundation necessary to understand the metrics used for evaluation.
+
+
+\subsection{Image Scraping}
+
+Web scraping is a fundamental technique for collecting visual data, playing a crucial role in building datasets and enhancing machine learning models, particularly generative ones. By automating the retrieval of images from the web, this process enables the efficient and scalable acquisition of diverse visual content. In this study, we employ a Selenium-based web scraper to navigate Google Images and extract a specified number of images based on predefined concepts, streamlining dataset construction.
+
+The process begins with the initialization of a headless Chrome browser instance, which is used to perform the search without a visible user interface. The browser navigates to Google Images and executes a search query for the specified concept. Once the search results are loaded, the script iterates through the retrieved images, extracting their URLs. Depending on the format, images are either decoded from \textit{base64} encoding or downloaded directly via HTTP requests. \textcolor{red}{For each cultural concept, we used a fixed training set of \textbf{10 images}. This choice is intentional and aligned with the DreamBooth paradigm, which is specifically designed to learn new concepts from extremely small datasets. By operating in a few-shot regime, the fine-tuning process significantly reduces the burden of dataset collection and makes manual curation feasible and effective. In culturally sensitive scenarios, this is particularly important, as it allows users to carefully inspect and filter each sample, minimizing noise and reducing the risk of introducing biased or misleading representations during training.
+}
+
+After retrieval, the images are processed to ensure consistency. Each image is converted to the RGB format if necessary and resized to maintain uniformity across the dataset. Finally, the processed images are systematically stored in a designated 	output folder, preserving their structure for further use in model training and evaluation. This automated approach enables the rapid collection of concept-specific images, facilitating their integration into machine learning pipelines.
+
+We emphasize that the central contribution of this work is the automated, human-guided workflow for dataset construction and fine-tuning, rather than a dependence on any specific image source. While our reference implementation uses Google Images for convenience, the same pipeline can be straightforwardly adapted to ingest images from copyright-safe sources (e.g., open-licensed repositories or curated institutional collections). Moreover, the user interface supports manual dataset curation by allowing users to visually inspect and filter retrieved samples and to optionally upload a small set of curated images (e.g., from museums/archives or self-owned photographs), which can reduce noise and mitigate dataset-induced cultural misrepresentation.
+
+
+\subsection{Hardware}
+All experiments were conducted on a workstation equipped with one NVIDIA GeForce RTX $3080$ Ti GPU ($12$\,GB VRAM) and an Intel Xeon E5-2620 CPU @ $2.00$\,GHz ($24$ logical CPUs). The system RAM was  $62$ GB.
+
+\paragraph{Role of LoRA and LCM in our system.}
+We emphasize that our contribution is primarily a systems and methodology pipeline focused on automation, reproducibility, and cultural applicability, rather than on proposing new model architectures. In this pipeline, \emph{training-time} concept adaptation is performed through LoRA fine-tuning, whereas \emph{inference-time} acceleration is achieved via Latent Consistency Model (LCM) scheduling, enabling high-quality generations with substantially fewer sampling steps.
+
+\subsection{Model Training}
+The customization of diffusion models has gained prominence in synthetic image generation, enabling fine-tuning of models to produce specific content. In this work, we use ow-Rank Adaptation (LoRA) to fine-tune the Stable Diffusion XL (SDXL) model using an instance-specific dataset. The LoRA approach is employed to reduce the computational cost of full model fine-tuning, making training more efficient and enabling rapid adaptation to new image domains.
+
+The implemented training pipeline is based on the \texttt{train\_dreambooth\_lora\_sdxl.py} script from the Diffusers library\footnote{\url{https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/train_dreambooth_lora_sdxl.py}} and is accelerated using Accelerate\footnote{\url{https://github.com/huggingface/accelerate}}. The process involves several key steps. First, we load the base model Stable Diffusion XL $1.0$, provided by Stability AI, along with the optimized Variational Autoencoder - VAE (\texttt{madebyollin/sdxl-vae-fp16-fix})\footnote{\url{https://huggingface.co/madebyollin/sdxl-vae-fp16-fix}} to improve latent space reconstructions. The model is trained to recognize a specific concept, defined by the \texttt{instance\_prompt} parameter, using a corresponding dataset stored in a directory.
+
+For efficient training, we use mixed precision (\texttt{fp16}), a batch size of $1$, and gradient accumulation every $2$ steps to optimize memory usage. The learning rate is set to $10^{-4}$ with a constant learning rate scheduler and no warm-up steps. Training is conducted over $3000$ optimization steps, with validation samples generated every $25$ epochs using the prompt ``A photo of \texttt{instance\_prompt}'' to assess model adaptation. Training progress is logged with Weights \& Biases (wandb)\footnote{\url{https://wandb.ai/site/}} for real-time performance monitoring.
+
+To enhance computational efficiency, we leverage \texttt{xFormers}\footnote{\url{https://github.com/facebookresearch/xformers}} for memory-efficient attention and utilize the $8$-bit Adam optimizer to reduce memory consumption while maintaining effective weight updates. The trained model is stored in an output directory dynamically generated based on a timestamp. Upon completion, the fine-tuned model weights are saved and can be reloaded for inference.
+
+
+\subsection{Image Generation}
+After the fine-tuning process, the model can be utilized to generate images based on user-defined prompts. This process involves loading the fine-tuned LoRA weights into the text-to-image diffusion pipeline, ensuring that the adapted model representations influence the image generation. Each LoRA checkpoint corresponds to a different concept, allowing the model to produce distinct visual outputs conditioned on specific learned features.
+
+For this purpose, we employ Stable Diffusion XL (SDXL) as the base model, combined with a Latent Consistency Model (LCM) \cite{luo2023latent} scheduler to accelerate the inference process. The UNet2DConditionModel is initialized from the pre-trained \texttt{latent-consistency/lcm-sdxl}\footnote{https://huggingface.co/latent-consistency/lcm-sdxl} repository and loaded, optimizing memory usage while maintaining computational efficiency.
+
+The image generation process is controlled through key parameters to balance quality and performance. The number of inference steps is set to $4$, leveraging the efficiency of the LCM scheduler, which allows for high-quality outputs with significantly fewer steps compared to traditional diffusion models. Additionally, the guidance scale is set to $8.0$, adjusting the trade-off between adherence to the text prompt and output diversity—higher values enforce stronger prompt conditioning, whereas lower values introduce more variation in generated images.
+
+The images are systematically stored in structured output directories, maintaining a clear organization for further analysis and evaluation. This automated approach enables the efficient generation of concept-specific images while leveraging fine-tuned model representations to produce high-quality outputs. The structured storage of generated images facilitates both quantitative and qualitative comparisons, supporting further research in model adaptation and diffusion-based image synthesis.
+
+\subsection{User Interface}
+A user-friendly web interface is developed using Gradio, enabling seamless interaction with the image generation pipeline. This interface allows users to define a concept for image scraping, specify the number of images to retrieve, and upload additional images for inclusion in the training dataset. Through this functionality, users can curate their datasets efficiently before initiating the fine-tuning process. Additionally, the interface facilitates the analysis of retrieved images, allowing users to filter and select only those most representative of the desired concept. This curation step is essential to maintaining dataset quality, as the presence of noisy or irrelevant samples can hinder model convergence and reduce accuracy during fine-tuning. By enabling users to refine the dataset interactively, the platform ensures that the model learns from high-quality, concept-aligned data, ultimately improving its generalization and performance.
+
+Once the dataset is prepared, the interface facilitates the training process by allowing users to specify an instance prompt that guides model adaptation. After training, users can generate images using the fine-tuned model, ensuring that the learned representations effectively influence the output. The interface also provides a comparative visualization of images generated before and after fine-tuning, offering an intuitive way to assess the model’s performance and improvements in concept adaptation.
+
+Beyond its technical functionality, this interface plays a crucial role in making our pipeline accessible to the widest possible audience, including individuals with no prior coding experience. By providing an intuitive, graphical environment, we lower the barrier to entry for users who may not be familiar with command-line tools or programming. This approach fosters broader engagement in AI model customization, enabling more people to experiment with fine-tuning and contributing to more inclusive and diverse generative models.
+
+\subsection{Concept Selection}
+In our approach, the user has the flexibility to select any concept they wish the model to learn, allowing for fully customizable fine-tuning based on individual needs or creative exploration. However, for the purpose of this study, we specifically selected a set of culturally significant concepts to evaluate our pipeline’s effectiveness in adapting generative models to previously unknown subjects.
+
+The concepts chosen, listed in Table~\ref{tab:clip_score_prompts}, were selected based on two key criteria: (i) they were not well-represented in the original Stable Diffusion XL model, meaning that in our initial tests, the model was unable to generate coherent images related to these concepts, and (ii) they hold cultural significance in various regions, representing folklore, traditional objects, and foods that are important to local communities. Addressing these underrepresented concepts aligns with our broader goal of improving the cultural inclusivity of AI-generated content.
+
+By selecting concepts from diverse countries and cultural backgrounds, we aim to highlight the necessity of adapting generative models to include local cultural knowledge. The evaluation of these concepts through our pipeline provides measurable insights into how well the model learns and generates previously unknown cultural representations. This structured selection process ensures that our findings contribute to discussions on AI’s role in preserving and representing cultural diversity, while also demonstrating the effectiveness of our fine-tuning methodology.
+
+\subsection{Metrics}
+In order to evaluate the quality and relevance of the generated images, we utilize two prevalent evaluation metrics: the CLIP (Contrastive Language-Image Pre-training) Score and the FID (Fréchet Inception Distance). A comprehensive discussion of these metrics will follow below.
+
+\subsubsection{CLIP Score}
+The CLIP Score is a metric used to assess the semantic relevance of generated images in relation to their corresponding input prompts.  CLIP (Contrastive Language-Image Pre-training) \cite{radford2021learningtransferablevisualmodels} is trained on large-scale text-image pairs to learn a joint embedding space, enabling it to measure the alignment between visual and textual representations. The score ranges from $0$ to $100$, with higher values indicating greater semantic similarity between the generated image and the prompt. This metric computes the cosine similarity between the visual embedding of an image and the textual embedding of a caption. This score was computed using the \texttt{clip\_score} function from the \texttt{torchmetrics.functional.multimodal} library. The CLIP Score is defined as follows \footnote{\url{https://lightning.ai/docs/torchmetrics/stable/multimodal/clip_score.html}}:
+\[
+\text{CLIPScore}(I, C) = \max(100 \times \cos(E_I, E_C), 0)
+\]
+
+where \( E_I \) and \( E_C \) represent the CLIP embeddings of the image \( I \) and the caption \( C \), respectively. The score ranges from 0 to 100, with higher values indicating greater semantic similarity between the image and the text. This metric has been found to correlate highly with human judgment in assessing image-caption relevance \cite{hessel2021clipscore}. Table \ref{tab:clip_score_prompts} presents the concepts evaluated along with their corresponding textual descriptions used for scoring.
+
+\begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \caption{Concepts and their corresponding textual descriptions used for CLIP Score evaluation.}
+    \begin{tabular}{|c|p{5.2cm}|}
+        \hline
+        \textbf{Concept} & \textbf{Visual Description} \\
+        \hline
+       \textit{Saci} & A one-legged trickster from Brazilian folklore, with dark skin, wearing a red cap and smoking a pipe. \\
+        \textit{Jian} & A straight double-edged Chinese sword with a narrow, elegant blade. \\
+        \textit{Pa\c{c}oca} & A cylindrical or rectangular Brazilian sweet made of ground peanuts, sugar, and salt, with a crumbly and slightly rough texture, typically light brown in color. \\
+        \textit{Lokum} & Turkish delight, a gelatinous sweet dusted with powdered sugar, in various colors. \\
+        \textit{Chamanto} & A traditional Chilean poncho with intricate patterns, worn over the shoulders. \\
+        \textit{Chaneques} & Mythical small humanoid creatures, resembling goblins, from Mexican folklore. \\
+        \textit{Cuscuz} & A plate of golden, grainy steamed cornmeal, often served with cheese or meat. \\
+        \textit{Patu\'a} & A small amulet or charm, often worn as a necklace, made of fabric or leather. \\
+        \hline
+    \end{tabular}
+    
+    \label{tab:clip_score_prompts}
+\end{table}
+
+
+
+\subsubsection{Frechet Inception Distance (FID)}
+
+The Fréchet Inception Distance (FID) is a metric used to assess the statistical similarity between the feature distributions of generated images and real images. FID was introduced by Heusel et al. \cite{heusel2018ganstrainedtimescaleupdate} and is widely used to evaluate the performance of generative models, such as Generative Adversarial Networks (GANs) and diffusion models. It compares the mean and covariance of the feature representations extracted from a pretrained Inception v3 network, quantifying how close the generated images are to the distribution of real images. A lower FID score indicates a higher similarity between the generated and real images, suggesting better quality.
+
+This score was computed using the FrechetInceptionDistance class from the \texttt{torchmetrics.image.fid} library. The FID is defined as follows \footnote{\url{https://lightning.ai/docs/torchmetrics/stable/image/frechet_inception_distance.html}}:
+
+\[
+\text{FID} = \|\mu - \mu_w\|_2^2 + \operatorname{tr}\left(\Sigma + \Sigma_w - 2(\Sigma \Sigma_w)^{\frac{1}{2}}\right)
+\]
+
+where \( \mu \) and \( \Sigma \) are the mean and covariance of the feature representations of the real images. \( \mu_w \) and \( \Sigma_w \) are the mean and covariance of the feature representations of the generated images. \( \operatorname{tr} \) represents the trace of a matrix. 
+
+\section{Results}
+\label{results}
+
+In this section, we present the results obtained for the proposed pipeline. The evaluation is divided into two categories: qualitative and quantitative analyses. In the qualitative analysis, we examine patterns and human observations derived from visually assessing the generated images. This includes comparing the images produced by the fine-tuned model with those generated by the base model before training. Additionally, we provide sample images to illustrate the improvements and potential challenges in concept learning. We also discuss biases identified in the generated images, analyzing how the model's prior knowledge and dataset composition influence the representation of certain concepts. In the quantitative analysis, we report the CLIP Score and Fréchet Inception Distance (FID) values obtained for the different concepts. We also analyze the relationship between training steps and these metrics, aiming to statistically assess whether the fine-tuning process effectively improved the generation of the target concepts. This allows for a clearer understanding of how the model evolves during training and whether further iterations yield significant improvements in concept representation.
+
+\subsection{Qualitative Analysis}
+
+Figures \ref{fig1} and \ref{fig2} illustrate the visual outputs of the model before and after training. In both figures, the top row (a-d) represents the model’s initial generations, while the bottom row (e-h) shows the corresponding results after training. A closer inspection of the figures reveals key differences between the pre-training and post-training outputs. In both figures, the initial samples (a-d) lack a clear representation of the intended concepts, as the model was not yet exposed to these categories. After training, the generations in (e-h) demonstrate a more refined understanding, successfully incorporating the target attributes.
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig_1_paper.pdf}
+    \caption{Generated images before and after training for different concepts. The top row (a-d) corresponds to images generated by the model before it was introduced to the target concepts. The bottom row (e-h) represents samples generated after training, where the model exhibits improved representations of the intended concepts.}
+    \label{fig1}
+\end{figure*}
+
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig_2_paper.pdf}
+    \caption{Additional examples of generated images before and after training. Similar to Fig. \ref{fig1}, the top row (a-d) shows pre-training generations, while the bottom row (e-h) presents outputs after concept learning. The figures highlight the impact of model training on the quality and fidelity of the generated images.}
+    \label{fig2}
+\end{figure*}
+
+It was expected that before training, the model would not have the ability to generate the desired concepts, producing inconsistent images. This aligns with our experimental design, as the selected concepts were chosen precisely because they were unknown to the model. The goal was to teach the model these new concepts and analyze its learning capabilities. Another important aspect of the pre-training images is the observation of potential biases the model may have had regarding these concepts before learning them explicitly. For instance, in Figure \ref{fig1}d), although the model hasn't generated a sword, the depiction often included individuals of East Asian descent or artistic styles reminiscent of Chinese culture. This suggests an implicit association between the concept and existing patterns within the model’s training data.
+
+A recurring trend in the pre-training images is the model’s tendency to generate houses or dwellings. This behavior can be observed in $6$ out of the $8$ images presented, suggesting a bias toward architectural structures when encountering unfamiliar concepts. In Figure \ref{fig1}e), the model managed to capture several key characteristics of \textit{Saci}, including the red cap, the presence of a single leg, dark skin tone, and a forested background. However, common errors included representations where the character had only one arm or other anatomical deformations. In Figures \ref{fig1}f), \ref{fig1}g), and \ref{fig1}h), the model successfully learned the fundamental essence of the respective concepts. However, a consistent challenge was the accurate depiction of object shapes and textures, with frequent inconsistencies in object connections. Similarly, in Figures \ref{fig2}e), \ref{fig2}f), and \ref{fig2}g), the results indicate successful concept learning, although texture generation remained a challenge. For example, in Figure \ref{fig2}f), the model’s representation of \textit{Paçoca} appeared grainy due to the brownish color, mistakenly giving it a sandy texture.
+
+Finally, in Figure \ref{fig2}h), a notable phenomenon was observed. The training dataset primarily contained images of the Chamanto, a traditional woven garment from central Chile. However, since the dataset did not include many examples of the Chamanto being worn by individuals, the model appears to have misinterpreted its cultural context. Instead, it associated the garment with Indian culture, leading to generated figures with Indian aesthetic features and even the presence of kumkum (a traditional forehead mark). This highlights how training data composition can significantly influence and reinforce cultural biases in generative models, sometimes resulting in incorrect or misleading associations when insufficient contextual information is available.
+
+\textcolor{blue}{This result reinforces the importance of maintaining refined manual control over the selection of cultural examples, a task enabled by our Gradio interface. By allowing the user to preview and filter samples before fine-tuning, we ensure artifacts like the Chamanto are presented in the correct context (e.g., people actually wearing the garment), preventing misinterpretations. Furthermore, in future work, automated diversity-aware curation solutions—using embedding-space clustering and cultural representativeness metrics \cite{luccioni2023stablebiasanalyzingsocietal}—can systematically suggest images from different groups and fill cultural gaps, complementing manual curation and strengthening the authenticity of the generated outputs.}
+
+
+The results indicate the success of the proposed methodology in teaching the model new concepts. However, they also emphasize the importance of discussing biases in AI models. Understanding and mitigating these biases is essential to minimize the perpetuation of prejudices, ensuring that AI-generated content is fair and representative. Addressing these concerns is crucial to the responsible development and deployment of AI in society.
+
+
+\subsection{Quantitative Analysis}
+
+Table \ref{tab:clip-dino-inference} presents a summary of the evaluation outcomes utilizing the CLIP Score and FID metrics for each concept examined. The CLIP Score assesses the semantic similarity between the generated images and their corresponding textual prompts, with higher scores indicating better alignment. Conversely, the FID metric quantifies the statistical divergence between the distributions of real and generated images, where lower scores denote more desirable results.
+
+To obtain the numerical results, the CLIP Score for each image was computed individually for $100$ images generated before fine-tuning and $100$ images generated after fine-tuning ($3000$ training steps). The mean CLIP Score and its standard deviation were then calculated for each concept. In contrast, the FID was computed as a statistical distance between the feature distributions of the generated images and those from a reference dataset. The reference dataset consisted of the real images used to train the model, allowing for a direct comparison of the quality of the generated images against authentic samples.
+
+\begin{table}[h]
+    \centering
+    \caption{Evaluation results using the CLIP Score and FID metrics for each concept. *Denotes the post-training model. **Standard Deviation.}
+    \begin{tabular}{@{}lcc@{}}
+        \toprule
+        \textbf{Concept} & \textbf{CLIP (std$^{**}$)} & \textbf{FID} \\
+        \midrule
+        Lokum* & \textbf{32.80 (2.79)} & 306.52 \\
+        Lokum & 17.66 (2.84) & 384.99 \\
+        Paçoca* & 24.34 (5.70) & 307.28 \\
+        Paçoca & 16.23 (1.74) & 367.91 \\
+        Cuscuz* & 29.16 (2.06) & 276.21 \\
+        Cuscuz & 21.41 (4.03) & 348.93 \\
+        Saci Pererê* & 28.69 (2.65) & 319.23 \\
+        Saci Pererê & 17.80 (3.77) & 361.98 \\
+        Chaneques* & 28.98 (2.32) & 312.28 \\
+        Chaneques & 20.45 (2.32) & 341.39 \\
+        Jian* & 26.89 (3.72) & 280.13 \\
+        Jian & 20.37 (2.22) & 347.90 \\
+        Chamanto* & 25.89 (4.17) & \textbf{250.82} \\
+        Chamanto & 16.85 (2.99) & 338.25 \\
+        Patuá* & 29.89 (2.95) & 273.83 \\
+        Patuá & 18.99 (1.53) & 378.74 \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:clip-dino-inference}
+\end{table}
+
+As observed in Table \ref{tab:clip-dino-inference}, the post-training results (denoted with an asterisk) consistently show higher CLIP Scores and lower FID values, indicating a significant improvement in both semantic alignment and image quality. The lower FID scores suggest that the model's outputs became statistically closer to real images, while the increase in CLIP Score reflects a better match between images and their corresponding textual descriptions.
+
+
+
+
+Among the evaluated concepts, \textit{Lokum} exhibited the highest CLIP Score ($32.80$), indicating that the model was particularly effective in learning this concept from the training dataset. The generated images for \textit{Lokum} closely aligned with the textual descriptions provided during training, demonstrating that the model was able to establish a strong semantic correspondence between image and text. \textit{Chamanto} exhibited the lowest FID ($250.82$) post-training, suggesting that this concept was particularly well-learned by the model. However, as noted in the qualitative analysis, the model's interpretation of the concept appears biased towards specific cultural elements, an aspect that should be considered when applying such models in real-world scenarios.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{fig_3_paper.pdf}
+        \caption{\parbox{0.8\linewidth}{Evolution of CLIP Score and FID metrics during training. (a) Average CLIP Score for different concepts across training iterations. (b) Mean FID (Fréchet Inception Distance) over the training steps.}}
+
+    \label{fig3}
+\end{figure}
+
+
+To further investigate the fine-tuning process, Figure \ref{fig3} presents the evolution of CLIP Score and FID metrics throughout the training process. These results complement the findings in Table \ref{tab:clip-dino-inference}, providing a dynamic view of how the model adapts to new concepts. To conduct this experiment, we performed training checkpoints every $500$ steps, saving intermediate versions of the LoRA fine-tuned models at steps $500$, $1000$, $1500$, $2000$, $2500$, and $3000$. Once the training was completed, we generated $100$ images for each of the six LoRA models, corresponding to these training steps. With this set of generated images, we computed the CLIP Score and FID metrics for each LoRA fine-tuned model and each concept individually. To establish a clear comparison baseline, we also included the results of the pre-finetuning model in our analysis. This allowed us to observe how the metrics evolved from the initial model to the final $3000$-step version, providing insights into how the fine-tuning process influenced the quality and semantic accuracy of the generated images over time.
+
+The zero point on the $x$-axis represents the model before fine-tuning, meaning that any improvement in CLIP Score or reduction in FID directly reflects the effectiveness of the adaptation process. As shown in Figure \ref{fig3}(a), we observe a clear upward trend in CLIP Score across training steps, confirming that the model progressively improves its ability to generate images aligned with the target prompts. This trend is consistent with the final scores reported in Table \ref{tab:clip-dino-inference}, where all concepts exhibit a significant increase in CLIP Score after fine-tuning. Notably, \textit{Lokum} stand out with the highest improvement, suggesting that the model successfully captured its defining characteristics. Conversely, Figure \ref{fig3}(b) shows a steady decrease in FID, indicating that the generated images become increasingly similar to real-world samples as training progresses. This aligns with the lower FID scores in Table \ref{tab:clip-dino-inference}, where \textit{Chamanto} achieved the best post-training FID value, highlighting a particularly strong adaptation to this concept. 
+
+An important insight from these results is that the most significant learning gains occur in the early stages of fine-tuning, particularly within the first $500$ steps, and extending up to approximately $2000$ steps. The sharp increase in CLIP Score and corresponding decrease in FID within this range indicate that the model rapidly assimilates new concepts during initial training iterations. Beyond this point, improvements become more subtle, suggesting diminishing returns in concept refinement. This observation is further supported by qualitative analysis, where the generated images exhibit noticeable enhancements early in training, but fewer substantial refinements after the $2000$-step mark. These findings highlight the efficiency of early-stage fine-tuning and suggest that, in practical applications, extended training beyond this threshold may not yield proportionally significant improvements.
+
+These results highlight the effectiveness of the proposed pipeline in automating the process of creating \texttt{LoRAs} from web-scraped data. The approach enables the generation of high-quality images while eliminating the need for manual dataset curation, annotation, and model training. By leveraging this automated methodology, it is possible to efficiently train models on new concepts with minimal human intervention, streamlining the process of expanding generative model capabilities. Furthermore, this technique is particularly valuable for integrating culturally specific concepts into generative models, allowing for the inclusion of diverse local traditions, artifacts, and symbols that might otherwise be underrepresented in large-scale datasets. By empowering local communities to contribute to AI training, this approach fosters a more inclusive and representative development of artificial intelligence, ensuring that generative models can better reflect the cultural richness and diversity of society.
+
+\section{Conclusions}
+\label{conclusions}
+
+In this work, we proposed a pipeline for training generative models on previously unknown concepts using a fully automated approach. By leveraging web scraping for dataset collection and fine-tuning through LoRAs, we demonstrated that our methodology enables generative models to learn and represent new concepts with high fidelity while minimizing the need for manual dataset curation and annotation. 
+
+Our evaluation, based on both qualitative and quantitative analyses, confirmed the effectiveness of the proposed approach. The CLIP Score analysis showed a significant increase in semantic alignment between generated images and textual descriptions after fine-tuning, while the FID results indicated improved perceptual quality of the images, making them statistically closer to real-world examples. Additionally, the results highlighted the model's tendency to exhibit certain biases depending on the dataset composition, reinforcing the need for careful dataset selection and bias mitigation strategies in generative AI.
+
+Our approach contributes to ongoing discussions on AI development and cultural representation by exploring ways to teach generative models about culturally specific concepts more efficiently. This is particularly relevant for fostering AI systems that are more inclusive and reflective of diverse communities. By examining how local cultural knowledge can be integrated into generative models, we provide insights that may help mitigate biases in large-scale datasets and encourage broader participation in AI development, ultimately contributing to a more culturally aware technology landscape.
+
+Future work could focus on refining dataset collection strategies to further mitigate biases and improve the generalization of learned concepts. \textcolor{blue}{Additionally, incorporating a human-in-the-loop feedback system into the existing Gradio interface would empower users to interactively refine the outputs, ensuring stronger alignment with cultural nuances and enhancing the robustness of the generated concepts}. Another promising direction is the application of this methodology to other domains beyond image generation, such as video and 3D generative models, broadening the scope of AI applications that benefit from automated knowledge expansion. \textcolor{blue}{Moreover, optimizing computational efficiency through adaptive training schedules or early-stopping mechanisms based on real-time metric convergence would make the pipeline even more accessible for resource-constrained settings. Furthermore, incorporating intangible cultural elements—such as traditions, oral narratives, and indigenous symbolism—could further showcase the pipeline’s versatility and deepen its cultural inclusivity}. \textcolor{blue}{In addition, exploring cross-modal applications—such as linking generated images with culturally grounded text or audio—could lead to richer, multi-sensory representations of heritage, opening new paths for educational, artistic, and preservation-oriented use cases.} \textcolor{blue}{Engaging cultural experts or local communities in the concept selection and validation process could also increase the authenticity of the results and foster more meaningful and collaborative applications.} Overall, our results demonstrate the potential of an automated pipeline for fine-tuning generative models, offering a powerful tool for expanding AI capabilities while promoting diversity and cultural inclusivity in generative AI systems.
+
+
+\section{Declarations}
+
+\subsection*{Availability of data and material}
+The authors declare that the data supporting the findings of this study, including the collected image datasets, fine-tuning checkpoints, and generated samples, will be publicly available at the following repository:  
+\url{https://github.com/Fmahlow/Auto-Tune}.
+
+\subsection*{Competing interests}
+The authors have no competing interests to declare that are relevant to the content of this article.
+
+\subsection*{Funding}
+This work is supported by Coordena\c{c}{\~a}o de Aperfei\c{c}oamento de Pessoal de N{\'i}vel Superior (CAPES), projects number 88887.607339/2021-00, 88887.192403/2025-00  and Funda\c{c}{\~a}o de Amparo {\`a} Pesquisa do Estado de S{\~a}o Paulo (FAPESP), grant Nos. 2023/12830-0 and 2024/14934-0.
+
+\subsection*{Authors' contributions}
+Felipe Mahlow led the conceptualization, methodology design, pipeline implementation, and writing of the manuscript. Renato Dias de Souza contributed to system integration, dataset collection, and experimental evaluation. João Paulo Papa supervised the research and contributed to experimental . Kelton Augusto Pontara da Costa provided technical oversight and contributed to the design of the web-based interface and computational infrastructure. All authors read and approved the final manuscript.
+
+\subsection*{Acknowledgements}
+The authors would like to thank the São Paulo State University (UNESP) for the research infrastructure support. Additional thanks to the Hugging Face and Gradio communities for providing open-source tools used in this work.
+
+
+\bibliography{references}
+%% if required, the content of .bbl file can be included here once bbl is generated
+%%\input sn-article.bbl
+
+\end{document}
