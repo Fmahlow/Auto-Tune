@@ -1,6 +1,6 @@
 accelerate
 bitsandbytes
-git+https://github.com/huggingface/diffusers.git
+git+https://github.com/huggingface/diffusers.git@v0.30.3
 matplotlib
 numpy
 pandas
@@ -12,6 +12,6 @@ torch
 torch-fidelity
 torchmetrics[image]
 torchvision
-transformers
+transformers==4.44.2
 tqdm
 xformers

@@ -131,6 +131,7 @@ def train_textual_inversion(
     save_steps: int,
     mixed_precision: str,
     initializer_token: str,
+    enable_xformers: bool,
     extra_args: list[str],
 ) -> tuple[Path, str]:
     concept_output = output_root / "training_runs" / concept.safe_name
@@ -157,8 +158,9 @@ def train_textual_inversion(
         f"--save_steps={save_steps}",
         f"--validation_prompt=a photo of {token}",
         "--validation_epochs=25",
-        "--enable_xformers_memory_efficient_attention",
     ]
+    if enable_xformers:
+        cmd.append("--enable_xformers_memory_efficient_attention")
     if mixed_precision:
         cmd.append(f"--mixed_precision={mixed_precision}")
     cmd.extend(extra_args)
@@ -209,6 +211,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--checkpointing-steps", type=int, default=500)
     parser.add_argument("--save-steps", type=int, default=500)
     parser.add_argument("--mixed-precision", default="fp16")
+    parser.add_argument("--enable-xformers", action="store_true")
     parser.add_argument("--num-images", type=int, default=1000)
     parser.add_argument("--num-inference-steps", type=int, default=4)
     parser.add_argument("--guidance-scale", type=float, default=8.0)
@@ -275,6 +278,7 @@ def main() -> None:
                 save_steps=args.save_steps,
                 mixed_precision=args.mixed_precision,
                 initializer_token=args.initializer_token,
+                enable_xformers=args.enable_xformers,
                 extra_args=args.extra_train_arg,
             )
             train_dirs[concept.safe_name] = concept_output

@@ -131,6 +131,8 @@ def train_dreambooth_lora(
     max_train_steps: int,
     checkpoint_steps: int,
     mixed_precision: str,
+    enable_xformers: bool,
+    use_8bit_adam: bool,
     extra_args: list[str],
 ) -> Path:
     concept_output = output_root / "training_runs" / concept.safe_name
@@ -152,11 +154,13 @@ def train_dreambooth_lora(
         "--lr_warmup_steps=0",
         f"--max_train_steps={max_train_steps}",
         f"--checkpointing_steps={checkpoint_steps}",
-        "--enable_xformers_memory_efficient_attention",
-        "--use_8bit_adam",
         f"--validation_prompt=A photo of {concept.name}",
         "--validation_epochs=25",
     ]
+    if enable_xformers:
+        cmd.append("--enable_xformers_memory_efficient_attention")
+    if use_8bit_adam:
+        cmd.append("--use_8bit_adam")
     if mixed_precision:
         cmd.append(f"--mixed_precision={mixed_precision}")
     cmd.extend(extra_args)
@@ -196,6 +200,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-train-steps", type=int, default=3000)
     parser.add_argument("--checkpointing-steps", type=int, default=500)
     parser.add_argument("--mixed-precision", default="fp16")
+    parser.add_argument("--enable-xformers", action="store_true")
+    parser.add_argument("--use-8bit-adam", action="store_true")
     parser.add_argument("--num-images", type=int, default=1000)
     parser.add_argument("--num-inference-steps", type=int, default=4)
     parser.add_argument("--guidance-scale", type=float, default=8.0)
@@ -259,6 +265,8 @@ def main() -> None:
                 max_train_steps=args.max_train_steps,
                 checkpoint_steps=args.checkpointing_steps,
                 mixed_precision=args.mixed_precision,
+                enable_xformers=args.enable_xformers,
+                use_8bit_adam=args.use_8bit_adam,
                 extra_args=args.extra_train_arg,
             )
             progress.advance(stage="training", concept=concept.name, detail="completed")
