@@ -50,7 +50,13 @@ First, we increased the number of generated samples used for quantitative evalua
 
 \item \textbf{Concept selection and generalization:} The selected concepts are diverse but somewhat arbitrary, with unclear criteria beyond cultural underrepresentation. Clarify whether the results generalize across concept types. Include additional examples or at least group-wise analysis.
 
-\textbf{\textcolor{blue}{Response:}} 
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for this valuable comment. We agree that, in the previous version, the rationale behind the choice of concepts and the scope of generalization were not sufficiently explicit. In the revised manuscript, we clarify that the selected concepts were not intended as an arbitrary list, but rather as culturally underrepresented examples chosen to span distinct visual categories with different representation challenges.
+
+More specifically, we now organize the benchmark concepts into three semantic groups: \emph{foods} (e.g., \textit{cuscuz}, \textit{lokum}, \textit{pa\c{c}oca}), \emph{folklore/mythological beings} (e.g., \textit{saci}, \textit{chaneques}), and \emph{artifacts/clothing/objects} (e.g., \textit{patu\'a}, \textit{jian}, \textit{chamanto}). This grouping allows us to evaluate whether the proposed pipeline behaves consistently across concept types with different visual properties, such as texture-heavy food items, character-like entities with higher semantic ambiguity, and structured objects or garments with more stable geometric cues.
+
+Following the reviewer’s suggestion, we added a group-wise analysis in addition to the per-concept results. In particular, we now report grouped quantitative results for CLIP Score, FID, and KID, together with their uncertainty estimates, so that the reader can assess performance trends not only at the individual concept level but also at the category level. This provides a clearer picture of how the method behaves across different types of cultural concepts.
+
+At the same time, we slightly refined the wording of our claims in the manuscript. Rather than suggesting unrestricted generalization to all cultural concepts, we now state the conclusion more precisely: the proposed pipeline shows robust behavior across multiple categories of underrepresented cultural concepts represented in our benchmark. We believe this revised framing, together with the new group-wise analysis, addresses the reviewer’s concern and better situates the scope of the contribution.
 \end{enumerate}
 
 \section*{Reviewer 3}
