@@ -39,7 +39,11 @@ In addition, the pipeline is not restricted to web-scraped images. The interface
 
 \item \textbf{Evaluation metrics and sample size for FID:} The evaluation is limited to CLIP Score and FID, which are imperfect proxies for cultural fidelity and representation. Additionally, 100 samples per concept may be statistically insufficient for meaningful FID comparisons due to high variance.
 
-\textbf{\textcolor{blue}{Response:}}
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for this important observation and agree that CLIP Score and FID alone do not fully capture cultural fidelity, and that computing FID with only 100 generated samples per concept may lead to unstable estimates. In response, we revised the evaluation pipeline in four complementary ways.
+
+First, we increased the number of generated samples used for quantitative evaluation from 100 to 1000 images per concept, which provides a substantially more stable basis for FID/KID estimation. Second, in addition to CLIP Score and FID, we now include Kernel Inception Distance (KID), which is generally considered more robust in limited-sample regimes and therefore serves as a useful complementary metric. Third, we report uncertainty for all quantitative metrics by providing mean, standard deviation, and 95\% confidence intervals obtained via bootstrap resampling. This allows the comparison between methods and concepts to be interpreted in a statistically more grounded way rather than relying on single-point estimates only.
+
+Finally, we agree that automated metrics are only proxies for cultural fidelity. For this reason, we expanded the evaluation protocol to include richer qualitative comparisons and a human-evaluation stage focused on cultural recognizability and fidelity, with rating forms prepared for annotators familiar with the corresponding concepts. In the revised manuscript, we explicitly position CLIP, FID, and KID as quantitative proxies that complement---rather than replace---qualitative and human-centered assessment. We believe these changes substantially strengthen the rigor of the evaluation section and directly address the reviewer’s concern regarding metric adequacy and sample size.
 
 \item \textbf{Reproducibility and resource reporting:} The implementation details are informative, but resource constraints (GPU type, total runtime, memory) are not specified, which limits reproducibility.
 
@@ -121,4 +125,3 @@ Given the scope of the present work and the limited revision timeframe, we inten
 \end{enumerate}
 
 \end{document}
-
