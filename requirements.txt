@@ -1,0 +1,17 @@
+accelerate
+bitsandbytes
+diffusers
+matplotlib
+numpy
+pandas
+peft
+Pillow
+scipy
+safetensors
+torch
+torch-fidelity
+torchmetrics[image]
+torchvision
+transformers
+tqdm
+xformers
