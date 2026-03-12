@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 from pathlib import Path
 
 import torch
-from diffusers import DiffusionPipeline, LCMScheduler, UNet2DConditionModel
 
 from experiment_utils import (
     Concept,
+    ProgressTracker,
     aggregate_metrics_by_group,
     create_human_eval_package,
     create_qualitative_sheet,
@@ -25,7 +26,20 @@ def run_cmd(cmd: list[str]) -> None:
     subprocess.run(cmd, check=True)
 
 
-def load_pipeline(base_model: str, use_lcm: bool) -> DiffusionPipeline:
+def import_diffusers_components():
+    try:
+        from diffusers import DiffusionPipeline, LCMScheduler, UNet2DConditionModel
+    except Exception as exc:
+        raise RuntimeError(
+            "Failed to import diffusers. This usually means the installed diffusers/torch "
+            "versions are incompatible in the current environment. Try pinning to a known "
+            "working pair before running generation."
+        ) from exc
+    return DiffusionPipeline, LCMScheduler, UNet2DConditionModel
+
+
+def load_pipeline(base_model: str, use_lcm: bool):
+    DiffusionPipeline, LCMScheduler, UNet2DConditionModel = import_diffusers_components()
     if use_lcm:
         unet = UNet2DConditionModel.from_pretrained(
             "latent-consistency/lcm-sdxl",
@@ -38,7 +52,7 @@ def load_pipeline(base_model: str, use_lcm: bool) -> DiffusionPipeline:
     return DiffusionPipeline.from_pretrained(base_model, torch_dtype=torch.float16).to("cuda")
 
 
-def unload_textual_inversion(pipe: DiffusionPipeline, token: str) -> None:
+def unload_textual_inversion(pipe, token: str) -> None:
     if hasattr(pipe, "unload_textual_inversion"):
         try:
             pipe.unload_textual_inversion(token)
@@ -47,7 +61,7 @@ def unload_textual_inversion(pipe: DiffusionPipeline, token: str) -> None:
 
 
 def generate_images(
-    pipe: DiffusionPipeline,
+    pipe,
     prompt: str,
     out_dir: Path,
     n_images: int,
@@ -185,6 +199,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is required for this script.")
 
@@ -193,6 +208,16 @@ def main() -> None:
         raise RuntimeError(f"No concept folders with images found in {args.data_root}")
 
     args.output_root.mkdir(parents=True, exist_ok=True)
+    total_steps = 0
+    if not args.skip_train:
+        total_steps += len(concepts)
+    if not args.skip_generate:
+        total_steps += len(concepts) * (2 + len(args.checkpoints))
+    if not args.skip_eval:
+        total_steps += len(concepts) * (2 + len(args.checkpoints))
+        total_steps += 4
+    progress = ProgressTracker(args.output_root, "textual_inversion_baseline", total_steps)
+    progress.log(f"Starting run for concepts: {[concept.name for concept in concepts]}")
     train_dirs = {concept.safe_name: args.output_root / "training_runs" / concept.safe_name for concept in concepts}
     learned_tokens = {concept.safe_name: f"<ti_{concept.safe_name}>" for concept in concepts}
 
@@ -200,6 +225,8 @@ def main() -> None:
         if not args.train_script.exists():
             raise FileNotFoundError(f"Training script not found: {args.train_script}")
         for concept in concepts:
+            progress.set_stage("training", concept.name, "starting")
+            progress.log(f"Training {concept.name}")
             concept_output, token = train_textual_inversion(
                 concept=concept,
                 output_root=args.output_root,
@@ -219,12 +246,15 @@ def main() -> None:
             )
             train_dirs[concept.safe_name] = concept_output
             learned_tokens[concept.safe_name] = token
+            progress.advance(stage="training", concept=concept.name, detail="completed")
 
     if not args.skip_generate:
+        progress.set_stage("generation", detail="loading pipeline")
         pipe = load_pipeline(args.base_model, use_lcm=not args.disable_lcm)
         for concept_index, concept in enumerate(concepts):
             concept_seed = args.seed_start + concept_index * (args.num_images * 10)
             without_dir = args.output_root / f"output_a_photo_of_{concept.safe_name}_without_finetuning"
+            progress.set_stage("generation", concept.name, "without_finetuning")
             generate_images(
                 pipe=pipe,
                 prompt=concept.prompt_base,
@@ -234,11 +264,13 @@ def main() -> None:
                 guidance_scale=args.guidance_scale,
                 seed_start=concept_seed,
             )
+            progress.advance(stage="generation", concept=concept.name, detail="without_finetuning_done")
 
             final_embedding = find_textual_inversion_embedding(train_dirs[concept.safe_name], None)
             token = learned_tokens[concept.safe_name]
             pipe.load_textual_inversion(str(final_embedding), token=token)
             with_dir = args.output_root / f"output_a_photo_of_{concept.safe_name}_with_baseline"
+            progress.set_stage("generation", concept.name, "with_baseline")
             generate_images(
                 pipe=pipe,
                 prompt=f"a photo of {token}",
@@ -249,14 +281,17 @@ def main() -> None:
                 seed_start=concept_seed,
             )
             unload_textual_inversion(pipe, token)
+            progress.advance(stage="generation", concept=concept.name, detail="with_baseline_done")
 
             for checkpoint in args.checkpoints:
                 try:
                     checkpoint_embedding = find_textual_inversion_embedding(train_dirs[concept.safe_name], checkpoint)
                 except FileNotFoundError:
+                    progress.advance(stage="generation", concept=concept.name, detail=f"checkpoint_{checkpoint}_missing")
                     continue
                 pipe.load_textual_inversion(str(checkpoint_embedding), token=token)
                 checkpoint_dir = args.output_root / f"output_{concept.safe_name}_checkpoint_{checkpoint}"
+                progress.set_stage("generation", concept.name, f"checkpoint_{checkpoint}")
                 generate_images(
                     pipe=pipe,
                     prompt=f"a photo of {token}",
@@ -267,8 +302,10 @@ def main() -> None:
                     seed_start=concept_seed,
                 )
                 unload_textual_inversion(pipe, token)
+                progress.advance(stage="generation", concept=concept.name, detail=f"checkpoint_{checkpoint}_done")
 
     if args.skip_eval:
+        progress.complete()
         return
 
     main_rows: list[dict[str, object]] = []
@@ -282,6 +319,7 @@ def main() -> None:
         condition_folders = []
 
         if without_dir.exists():
+            progress.set_stage("evaluation", concept.name, "without_finetuning")
             main_rows.append(
                 evaluate_generated_folder(
                     concept=concept,
@@ -295,8 +333,10 @@ def main() -> None:
                 )
             )
             condition_folders.append(("without_finetuning", without_dir))
+            progress.advance(stage="evaluation", concept=concept.name, detail="without_finetuning_done")
 
         if with_dir.exists():
+            progress.set_stage("evaluation", concept.name, "with_baseline")
             main_rows.append(
                 evaluate_generated_folder(
                     concept=concept,
@@ -310,11 +350,14 @@ def main() -> None:
                 )
             )
             condition_folders.append(("with_baseline", with_dir))
+            progress.advance(stage="evaluation", concept=concept.name, detail="with_baseline_done")
 
         for checkpoint in args.checkpoints:
             checkpoint_dir = args.output_root / f"output_{concept.safe_name}_checkpoint_{checkpoint}"
             if not checkpoint_dir.exists():
+                progress.advance(stage="evaluation", concept=concept.name, detail=f"checkpoint_{checkpoint}_missing")
                 continue
+            progress.set_stage("evaluation", concept.name, f"checkpoint_{checkpoint}")
             checkpoint_rows.append(
                 evaluate_generated_folder(
                     concept=concept,
@@ -327,6 +370,7 @@ def main() -> None:
                     kid_subset_size=args.kid_subset_size,
                 )
             )
+            progress.advance(stage="evaluation", concept=concept.name, detail=f"checkpoint_{checkpoint}_done")
 
         if condition_folders:
             create_qualitative_sheet(
@@ -386,11 +430,13 @@ def main() -> None:
         group_metric_fields,
         aggregate_metrics_by_group(main_rows, args.bootstrap_samples, args.metric_seed + 100),
     )
+    progress.advance(stage="evaluation", detail="groupwise_main_written")
     write_csv(
         args.output_root / "metrics_groupwise_checkpoints_baseline.csv",
         group_metric_fields,
         aggregate_metrics_by_group(checkpoint_rows, args.bootstrap_samples, args.metric_seed + 200),
     )
+    progress.advance(stage="evaluation", detail="groupwise_checkpoints_written")
     create_human_eval_package(
         concepts=concepts,
         condition_map=human_eval_conditions,
@@ -398,6 +444,9 @@ def main() -> None:
         samples_per_condition=args.human_eval_samples,
         seed=args.metric_seed,
     )
+    progress.advance(stage="evaluation", detail="human_eval_written")
+    progress.advance(stage="evaluation", detail="metrics_written")
+    progress.complete()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,145 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,graphicx}
+\usepackage{color}
+\usepackage[font={footnotesize}]{caption}
+\usepackage{ulem}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[style=ieee, doi=true]{biblatex}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\addbibresource{references.bib}
+
+
+\begin{document}
+
+\begin{center}
+{\bf \underline{Letter to the Editor}}
+\end{center}
+\vspace{1cm}
+
+\noindent Dear Editor,
+\vspace{0.5cm}
+
+Thank you for the opportunity to resubmit our manuscript entitled ``Automated Fine-Tuning of Diffusion Models for Learning Underrepresented Concepts from Web-Scraped Data” to Multimedia Tools and Applications following the first-round review. We are especially grateful to Reviewer \#1 for recognizing the novelty of our automated pipeline and for offering constructive feedback that has substantially enhanced the manuscript. In response to their suggestions, we have broadened our discussion of related work, clarified key methodological details, and outlined promising directions for future research. All revisions and proposed new avenues are clearly highlighted throughout the revised manuscript.
+
+
+\vspace{0.5cm}
+
+\noindent We believe these enhancements significantly deepen the inclusivity, rigor, and practical applicability of our work, and we hope the revised manuscript will meet the high standards of Multimedia Tools and Applications. Thank you for your careful consideration.
+
+\vspace{0.5cm}
+
+\noindent Kind regards,
+
+\vspace{0.5cm}
+
+\noindent The Authors
+\vspace{2cm}
+
+\newpage
+\begin{center}
+{\bf \underline{List of Changes}}
+\end{center}
+\smallskip
+
+\noindent In light of the queries of the referees, we have modified some parts in the main text. They are displayed in \textcolor{blue}{blue} in the revised manuscript. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIRST REFEREE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+{\bf \underline{Reviewer \#1}}
+\end{center}
+
+The paper offers an innovative automated pipeline for fine-tuning diffusion models to capture underrepresented cultural concepts is both inspiring and impactful. To further elevate this outstanding work, several avenues for enhancement could be explored with enthusiasm.
+
+{\bf \textcolor{blue}{Our response to the general evaluation:}} We thank the reviewer for their generous praise of the innovation and impact of our automated pipeline, and we will explore the suggested avenues to further strengthen and extend our methodology.
+
+
+\vspace{0.2cm}
+
+\begin{center}
+\textcolor{blue}{{\bf Responses to Reviewer \#1}}
+\end{center}
+{
+We would like to thank the referee for their careful reading and critical comments. Below we address their comments in detail and state the changes we made in the manuscript accordingly.
+}
+
+\begin{itemize}
+\item {\bf Reviewer's comment: 1)}{\it
+Some related work can be included for discussion. "Image translation as diffusion visual programmers" ICLR; "Diffusion-inspired truncated sampler for text-video retrieval" NeuriPS; "Aprompt: Attention prompt tuning for efficient adaptation of pre-trained language models" EMNLP.}
+
+\item {\bf \textcolor{blue}{Our response:}} The references suggested by the reviewer have been carefully reviewed, and it was fully agreed that they constitute an excellent addition to the discussion of related work. Therefore, the following articles have been incorporated into the text, and the new Related Work section is presented below for evaluation.
+
+\textbf{Diffusion Models:} One of the most notable examples is Stable Diffusion \cite{rombach2022high}, where the diffusion process takes place in the latent space instead of the pixel space. In this architecture, text embeddings from a pre-trained CLIP \cite{clip} model are fed into a UNet enhanced with cross-attention. Stable Diffusion XL \cite{sdxl} further improves upon this by incorporating a more robust UNet and a larger CLIP text encoder, refining text-to-image conditioning. Other models, such as DALL-E 3 \cite{betker2023improving}, achieve comparable results by using enhanced synthetic captions to boost CLIP Score performance. \textcolor{blue}{The recent FLUX.1 Kontext \cite{labs2025flux1kontextflowmatching} presents a flow‐matching model that unifies image generation and editing in latent space, achieving high consistency across multiple iterations and interactive speeds. The Diffusion Visual Programmer (DVP) \cite{han2024imagetranslationdiffusionvisual} is a neuro-symbolic image translation framework that incorporates a conditionally flexible diffusion model with GPT-based visual programming to perform “where-then-what” edits in a controllable, explainable, and high-fidelity manner.}
+
+\textcolor{blue}{In video, diffusion models with a 3D causal VAE and an expert transformer (CogVideoX) \cite{yang2025cogvideoxtexttovideodiffusionmodels} produce long-duration (up to 10 s at 16 fps and 768×1360) coherent, semantically aligned, high-fidelity videos, achieving state-of-the-art performance. And for text-to-video retrieval, DITS \cite{NEURIPS2024_0731f0e6} is a diffusion-inspired truncated sampler that progressively aligns text and video embeddings with a contrastive loss to model the multimodal gap, achieving state-of-the-art text-video retrieval performance.}
+
+
+\textbf{Fine-tuning:} Alongside the advancements in large-scale architectures, fine-tuning techniques have gained prominence for adapting text-to-image models to specific domains or personalized subjects. DreamBooth \cite{dreambooth} and Textual Inversion \cite{textualinversion} are particularly effective in few-shot scenarios, enabling personalized generation from very limited samples. New approaches such as Specialist Diffusion \cite{Specialist-Diffusion} and Object-Driven One-Shot Fine-Tuning with Prototypical Embedding \cite{lu2024object} aim to further reduce overfitting and improve fidelity. These methods facilitate adaptation to novel objects, styles, and even cultural elements via specialized fine-tuning strategies. \textcolor{blue}{In Large Language Models (LLMs), APROMPT \cite{wang2023aprompt} introduces trainable query, key, and value prompts directly into the attention mechanism—beyond traditional input-level prompt tuning—enabling efficient and highly effective fine-tuning with fewer parameters.}
+
+
+\color{black}
+\item {\bf Reviewer's comment: 2)}{\it
+Strengthening bias mitigation by integrating automated tools for diversity-aware dataset curation would enhance the cultural authenticity of generated outputs, building on the paper's insightful discussion of biases like the Chamanto's misinterpretation}
+
+\item {\bf \textcolor{blue}{Our response:}} We appreciate this insightful comment. We have added the following paragraph to the results of the manuscript (highlighted in blue) that directly addresses this point, acknowledging the importance of automated methods for curating culturally diverse datasets. As mentioned, our current pipeline already supports manual curation through the Gradio interface, but we recognize that integrating automated solutions based on embedding-space clustering and representativeness metrics can further enhance the diversity and cultural authenticity of the generations. Therefore, we highlight this direction as a natural and promising avenue for future work.
+
+\textcolor{blue}{This result reinforces the importance of maintaining refined manual control over the selection of cultural examples, a task enabled by our Gradio interface. By allowing the user to preview and filter samples before fine-tuning, we ensure artifacts like the Chamanto are presented in the correct context (e.g., people actually wearing the garment), preventing misinterpretations. Furthermore, in future work, automated diversity-aware curation solutions—using embedding-space clustering and cultural representativeness metrics \cite{luccioni2023stablebiasanalyzingsocietal}—can systematically suggest images from different groups and fill cultural gaps, complementing manual curation and strengthening the authenticity of the generated outputs.}
+
+
+\item {\bf Reviewer's comment: 4)} {\it
+Broadening the scope to include a wider array of cultural elements, such as intangible traditions or indigenous narratives, could showcase the pipeline's versatility and deepen its inclusivity.}
+
+\item {\bf \textcolor{blue}{Our response:}} We appreciate the suggestion. We agree that expanding the scope to include intangible cultural elements—such as rituals, oral narratives, or indigenous symbols—is a valuable opportunity to demonstrate the pipeline’s versatility and cultural sensitivity. Although this initial work focused on visual representations of material artifacts, we highlight this expansion as a relevant direction for future studies, especially in collaboration with experts from the respective cultures to ensure a respectful and accurate approach. We have added the following discussion to the conclusion of the manuscript:
+
+\textcolor{blue}{Moreover, incorporating intangible cultural elements—such as traditions, oral narratives, and indigenous symbolism—could further showcase the pipeline’s versatility and deepen its cultural inclusivity}. 
+
+
+\item {\bf Reviewer's comment: 5)} {\it
+Incorporating a human-in-the-loop feedback system within the already impressive Gradio interface would empower users to refine outputs interactively, ensuring even greater alignment with cultural nuances.
+}
+\item {\bf \textcolor{blue}{Our response:}} 
+
+We appreciate this insightful comment-we’re pleased that the developed interface was well received. We fully agree that incorporating a human-in-the-loop feedback system into the Gradio interface could significantly enhance alignment with cultural nuances. While our current interface already allows for manual selection and curation of images prior to fine-tuning, we recognize the potential of extending it with interactive mechanisms for evaluating and refining the generated outputs. We plan to explore this integration in future versions of the pipeline, enabling more refined and culturally aware feedback loops.
+
+\textcolor{blue}{Additionally, incorporating a human-in-the-loop feedback system into the existing Gradio interface would empower users to interactively refine the outputs, ensuring stronger alignment with cultural nuances and enhancing the robustness of the generated concepts}.
+
+\item {\bf Reviewer's comment: 6)} {\it
+Optimizing computational efficiency through adaptive training schedules or early-stopping mechanisms based on real-time metric convergence would make the pipeline even more accessible for resource-constrained settings.}
+
+\item {\bf \textcolor{blue}{Our response:}} Thank you for the excellent suggestion. We agree that adopting optimization strategies such as adaptive training schedules and early-stopping criteria based on real-time metric convergence can make the pipeline more efficient and accessible, particularly in resource-constrained settings. While this work employed a fixed number of training steps for all concepts, we recognize the potential benefits of adaptive approaches and plan to incorporate them in future versions of the system. Below is a new discussion in our future works paragraph, with this concept highlighted.
+
+\textcolor{blue}{Moreover, optimizing computational efficiency through adaptive training schedules or early-stopping mechanisms based on real-time metric convergence would make the pipeline even more accessible for resource-constrained settings}
+
+
+\item {\bf Reviewer's comment: 7)} {\it
+Exploring cross-modal applications, like pairing images with text or audio tied to cultural contexts, could create
+richer, multi-sensory representations of heritage. }
+
+\item {\bf \textcolor{blue}{Our response:}} We appreciate the inspiring suggestion. We agree that exploring cross-modal applications—such as pairing images with culturally contextualized text or audio—represents a promising direction for enhancing the expressiveness and depth of the generated representations. This type of approach could significantly enrich the preservation and dissemination of cultural heritage, particularly in educational or museological contexts. We consider this extension a valuable path for future work and one that aligns well with the goal of fostering more culturally sensitive and inclusive AI. We have added the following discussion to the conclusion of the manuscript:
+
+\textcolor{blue}{In addition, exploring cross-modal applications—such as linking generated images with culturally grounded text or audio—could lead to richer, multi-sensory representations of heritage, opening new paths for educational, artistic, and preservation-oriented use cases.}
+
+
+\item {\bf Reviewer's comment: 8)} {\it
+Finally, engaging local communities or cultural experts in the concept selection and validation process would ensure authenticity and foster meaningful collaboration. These enhancements would amplify the paper's already transformative impact, pushing the boundaries of how AI can celebrate and preserve global cultural diversity.
+}
+\item {\bf \textcolor{blue}{Our response:}} We sincerely appreciate this valuable observation. We fully agree that involving local communities and cultural experts in the concept selection and validation process is essential to ensure authenticity, respect, and representativeness. While this work adopted a primarily technical and automated approach, we recognize that direct collaboration with cultural knowledge holders can significantly enhance the social and ethical impact of the proposed methodology. We consider this type of partnership a necessary step for future iterations of the pipeline, particularly in contexts involving the preservation of intangible heritage and the development of culturally sensitive applications. We have added the following discussion to the conclusion of the manuscript:
+
+\textcolor{blue}{Engaging cultural experts or local communities in the concept selection and validation process could also increase the authenticity of the results and foster more meaningful and collaborative applications.}
+
+\end{itemize}
+
+\newpage
+\printbibliography
+
+\end{document}
+
+
+

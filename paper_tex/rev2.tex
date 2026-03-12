@@ -1,0 +1,124 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Response to Reviewers}}\\
+\vspace{0.5em}
+Manuscript: \textit{Automated Fine-Tuning of Diffusion Models for Learning Underrepresented Concepts from Web-Scraped Data}
+\end{center}
+
+\vspace{1em}
+
+\section*{Reviewer 1}
+
+\noindent \textbf{General comment:} This paper presents a clear and well-structured study that addresses a timely and relevant problem. The methodology is solid, and the experimental results support the authors' claims. The paper is grounded in existing literature and makes a meaningful contribution to the field. While the core content is strong, the authors are encouraged to continue polishing the presentation---particularly the formatting of tables and figures, as well as refining the language for clarity and consistency. With minor improvements in presentation, this work will have even greater impact. I recommend acceptance.
+
+\vspace{0.75em}
+\noindent \textbf{\textcolor{blue}{Response:}} We thank Reviewer \#1 for the positive and encouraging assessment of our work and for recommending acceptance. In response to the presentation-related suggestions, we carefully revised the manuscript to improve clarity and consistency throughout. In particular, we refined the language for readability, corrected minor grammatical issues, and standardized terminology. We also revisited the formatting of tables and figures to enhance visual consistency and improve the accessibility of the results (e.g., consistent captions, improved spacing/alignment, and clearer in-figure labels where applicable).
+
+\vspace{1em}
+
+\section*{Reviewer 2}
+
+\begin{enumerate}[label=\textbf{C\arabic*.}, leftmargin=*]
+\item \textbf{Baseline comparison and benchmarking:} The paper presents an automated pipeline integrating web scraping and LoRA fine-tuning to teach diffusion models underrepresented cultural concepts. While this automation is a useful contribution, it overlaps conceptually with existing works such as DreamBooth. The manuscript lacks comparative benchmarking with these or other contemporary few-shot methods on the same cultural concepts. Include a baseline comparison with at least one alternative fine-tuning method, using the same dataset. Quantitative metrics and visual examples should support the comparative analysis.
+
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for this important suggestion. We would like to clarify that our training pipeline is in fact based on the DreamBooth paradigm, combined with LoRA for parameter-efficient adaptation in the few-shot setting. We agree that this was not sufficiently explicit in the previous version, and we have now clarified this point in the revised manuscript. In addition, following the reviewer’s recommendation, we included an alternative baseline comparison using \texttt{Textual Inversion} with the SDXL Model, under the same concept/data conditions adopted in our experiments. We report both quantitative results (CLIP Score and FID) and qualitative visual examples in the revised Results section, allowing a direct comparison between our DreamBooth-based pipeline and the textual inversion baseline. This addition strengthens the benchmarking analysis and better positions the contribution of our approach.
+
+
+\item \textbf{Image quality control and dataset bias:} While the pipeline automates image collection, it does not adequately address image quality control or dataset bias. The issue of cultural misrepresentation demonstrates the limitations of unfiltered web-scraped data.
+
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for highlighting this important concern. We fully agree that unfiltered web-scraped data can contain noisy, low-quality, or culturally misleading images, which may propagate misrepresentation into the fine-tuned model. This is precisely why our pipeline includes an explicit \emph{human-in-the-loop} dataset curation step: after scraping, the user is presented with a visual gallery of the retrieved images and can manually inspect and remove irrelevant, low-quality, or contextually incorrect samples before training.
+
+In addition, the pipeline is not restricted to web-scraped images. The interface allows the user to \emph{manually upload} a small set of curated images (e.g., from a museum collection, cultural archive, or personal repository) and use them directly for fine-tuning. In our experiments, we show that the method works well with only 10 images per concept, and in practice the approach can operate with even fewer carefully selected examples. We believe these design choices directly address quality control and reduce the risk of dataset-induced cultural misrepresentation, while preserving the practicality and accessibility of the proposed framework.
+
+\item \textbf{Evaluation metrics and sample size for FID:} The evaluation is limited to CLIP Score and FID, which are imperfect proxies for cultural fidelity and representation. Additionally, 100 samples per concept may be statistically insufficient for meaningful FID comparisons due to high variance.
+
+\textbf{\textcolor{blue}{Response:}}
+
+\item \textbf{Reproducibility and resource reporting:} The implementation details are informative, but resource constraints (GPU type, total runtime, memory) are not specified, which limits reproducibility.
+
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for this important comment. In response, we added a short \emph{Hardware} paragraph in the \emph{Model Training} subsection of the revised manuscript, reporting the main computational resources used to run our experiments (GPU model and VRAM, CPU model, and system memory). We believe this addition improves the reproducibility of the proposed pipeline and facilitates a more accurate assessment of the computational requirements for training and inference.
+
+\item \textbf{Concept selection and generalization:} The selected concepts are diverse but somewhat arbitrary, with unclear criteria beyond cultural underrepresentation. Clarify whether the results generalize across concept types. Include additional examples or at least group-wise analysis.
+
+\textbf{\textcolor{blue}{Response:}} 
+\end{enumerate}
+
+\section*{Reviewer 3}
+
+\begin{enumerate}[label=\textbf{C\arabic*.}, leftmargin=*]
+\item \textbf{Method reuse vs.\ improvement/analysis:} The system uses LoRA fine-tuning and Latent Consistency Models, but both are directly reused rather than improved or analyzed.
+
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for this comment. We would like to clarify that the goal of this work is not to propose new fine-tuning algorithms or new consistency models, but rather to introduce an end-to-end \emph{automated pipeline} that makes existing, well-established components (LoRA fine-tuning and LCM-based inference) practical and accessible for learning underrepresented cultural concepts from small, user-provided datasets.
+
+Regarding LoRA, we deliberately adopt it as a strong and widely used parameter-efficient baseline for few-shot adaptation, since it provides a good trade-off between sample efficiency, training stability, and computational cost in resource-constrained settings. Regarding LCMs, we integrate them to accelerate inference and reduce the number of sampling steps required to obtain high-quality outputs, improving the usability of the pipeline for iterative experimentation.
+
+To address the reviewer’s request for a deeper treatment beyond reuse, we revised the manuscript to more explicitly motivate these design choices and to discuss their role in our system (i.e., where training-time adaptation is performed by LoRA and where inference-time acceleration is achieved through LCM scheduling). We believe this clarification better positions our contribution as a systems and methodology paper focused on automation, reproducibility, and cultural applicability, rather than on proposing new model architectures.
+
+\item \textbf{Dataset details and evaluation rigor:} The dataset is web-scraped, but details such as dataset size, cleaning, copyright considerations, and image diversity are vague. Evaluation relies only on CLIP Score and FID, which are standard metrics, without human evaluation or statistical significance testing.
+
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for this comment. In response, we expanded the Methodology section to clarify key dataset details and the data-handling steps used in our experiments. In particular, we now make explicit the dataset size used for fine-tuning (a fixed set of 10 images per concept in our study), describe the practical cleaning/quality-control mechanisms (user-facing visual inspection and filtering of retrieved samples, with optional manual upload of curated images), and clarify that the pipeline’s data sourcing is not inherently tied to a single web platform and can be adapted to copyright-safe repositories depending on the deployment context.
+
+Regarding evaluation, we agree that CLIP Score and FID are standard metrics and do not fully capture cultural fidelity. We therefore position them as quantitative proxies that complement our qualitative visual assessment (Figures 1 and 2). We also acknowledge in the revised manuscript that human evaluation and statistical significance testing would be valuable additions, and we include them as concrete directions for future work.
+\item \textbf{Bias mitigation and sociocultural validation:} There is no evidence of actual bias mitigation, user study, or sociocultural validation.
+
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for raising this important limitation. We clarify that the main idea of this paper is to present the pipeline as a \emph{tool} that empowers users to reduce representational gaps by \emph{choosing} the underrepresented concepts they want the model to learn and by \emph{providing} appropriate examples for fine-tuning. In other words, our contribution is centered on enabling targeted, user-driven interventions (what to teach and which samples to use) rather than claiming an end-to-end bias mitigation method validated via user studies.
+
+Concretely, the pipeline supports user agency at two key points: (i) concept selection, which allows users to explicitly identify missing or culturally underrepresented concepts they wish to add to the model’s capabilities, and (ii) dataset curation, where users can visually inspect and filter scraped images and/or manually upload a small set of curated images (e.g., from museums or cultural archives). These design choices make bias-aware data selection feasible even in very small-data regimes (our experiments use 10 images per concept, and the method can operate with fewer), helping users avoid noisy or stereotypical samples and thus reduce dataset-induced misrepresentation.
+
+We fully agree that rigorous sociocultural validation (e.g., evaluation by cultural experts or affected communities) and user studies would further strengthen this line of work, and we have therefore explicitly acknowledged them as key directions for future research.
+
+\item \textbf{Copyright and dataset bias risks:} Web scraping from Google Images can raise copyright and dataset bias issues.
+
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for pointing out these important risks. We agree that scraping from general-purpose search engines can introduce both copyright concerns and dataset biases. We would like to emphasize that the central contribution of this work is the \emph{idea and workflow} of an automated, human-guided data collection and fine-tuning pipeline, rather than a dependence on any specific source (e.g., Google Images). In practice, the same pipeline can be straightforwardly adapted to scrape or ingest images from copyright-safe sources (e.g., open-licensed repositories or curated institutional collections), depending on the intended deployment context. We also clarify in the revised manuscript that users are responsible for ensuring appropriate rights/permissions when collecting and using images.
+
+Importantly, our pipeline is designed to support \emph{curated} and user-provided datasets as a first-class option: users can manually upload a small set of images obtained from authorized sources (e.g., open cultural repositories, museums/archives with permissive licensing, or self-owned photographs) instead of relying on unfiltered web results. Additionally, the interface provides a human-in-the-loop inspection step that allows users to remove irrelevant or potentially problematic samples before training, which can also help reduce dataset-induced biases. We have added/strengthened these clarifications in the manuscript and highlight responsible data sourcing as a key practical consideration when deploying the pipeline.
+\end{enumerate}
+
+\section*{Reviewer 7}
+
+\begin{enumerate}[label=\textbf{C\arabic*.}, leftmargin=*]
+\item \textbf{Multi-source collection and curated vs.\ web-only comparison:} The paper presented a strong automated pipeline for fine-tuning diffusion models to capture underrepresented cultural concepts making sense for AI footsteps. To further raise this work, several marks for enhancement could be pointed.1 - Multi-source collection (cultural archives, museum, i.e.\ open-GLAM datasets, curated photo repositories) and explicitly compare ``web-only'' vs ``curated'' subsets on CLIP and FID parameters.
+
+\textbf{\textcolor{blue}{Response:}} 
+
+\item \textbf{Hyperparameter extraction or rule inference:} 2 - Either hyperparameter extraction is needed, or rule inference needs to be performed to achieve the objectives of the paper. Any one of the points will put forward this work.
+
+\textbf{\textcolor{blue}{Response:}} 
+\end{enumerate}
+
+\section*{Reviewer 8}
+
+\begin{enumerate}[label=\textbf{C\arabic*.}, leftmargin=*]
+\item \textbf{Lack of explicit bias mitigation and cultural validation:} Although the pipeline identifies dataset-induced biases, it does not actively mitigate them during data collection or model training. The absence of bias-aware filtering, dataset balancing, or fairness-driven optimization may lead to skewed or stereotypical representations of cultural concepts. Moreover, cultural authenticity is assessed primarily through automated metrics, without validation from cultural experts or affected communities.
+
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for the careful reading and for raising these important points.
+
+First, we would like to clarify that it is not the pipeline itself that automatically identifies biases. In our study, the identification of biases was performed by us during the experimental analysis, when the base model failed to generate coherent images for culturally local concepts. These failures revealed representational gaps and implicit biases in the pre-trained model, which motivated the proposed approach.
+
+
+The goal of the proposed pipeline is precisely to mitigate such biases, by providing a practical and accessible tool that enables users to teach diffusion models concepts that were previously underrepresented or absent from their training data. In this sense, the pipeline acts as a corrective mechanism, allowing new cultural knowledge to be incorporated into the model through targeted fine-tuning.
+
+Regarding dataset filtering, we emphasize that dataset curation is an explicit component of the pipeline. The Gradio interface allows users to manually inspect, filter, and refine the scraped images before training. This step is intentionally designed to remove noisy, stereotypical, or contextually incorrect samples, and plays a central role in controlling dataset-induced biases.
+
+Concerning dataset balancing, we note that its applicability is limited in the context of our study. Each fine-tuning task focuses on learning a single concept, and— as now explicitly stated in the revised manuscript (Section 3.1)—all experiments use a fixed dataset of 10 images per concept, following the DreamBooth paradigm. In this extreme few-shot setting, traditional dataset balancing strategies are not directly applicable, and careful manual selection becomes a more effective and meaningful control mechanism. We have added this clarification to the paper to make this design choice explicit.
+
+Finally, while automated metrics such as CLIP Score and FID are used for quantitative evaluation, cultural authenticity is also assessed through qualitative visual inspection, as presented in Figures 1 and 2. These visual analyses allow us to examine whether key cultural attributes are present and correctly represented in the generated images. We fully agree that validation by cultural experts or affected communities would further strengthen this assessment. However, due to time constraints within the review period, such validation could not be conducted. This limitation and the importance of expert-driven evaluation have now been explicitly acknowledged and discussed in the Conclusions section as future work.
+
+We believe these clarifications better position the scope of our contribution and highlight the pipeline’s role as a practical tool for mitigating representational gaps in generative models.
+
+\item \textbf{Restriction to visual and single-modal generation:} The proposed approach is limited to image generation and focuses primarily on tangible visual concepts. It does not address intangible cultural elements such as traditions, oral narratives, or symbolic meanings, nor does it explore cross-modal extensions involving text, audio, or video generation.
+
+\textbf{\textcolor{blue}{Response:}} We thank the reviewer for this valuable suggestion. We fully agree that extending the approach to intangible cultural elements and cross-modal generation is an important and promising research direction. However, we believe that addressing such aspects would introduce an additional level of methodological and conceptual complexity, requiring different models, datasets, and evaluation protocols.
+
+Given the scope of the present work and the limited revision timeframe, we intentionally focus on visual, single-modal image generation. In this context, we view the proposed pipeline as an important step forward, providing a practical foundation for mitigating representational gaps in current generative models. Extensions toward intangible cultural elements and multimodal generation are therefore considered beyond the scope of this paper and are acknowledged as future work.
+\end{enumerate}
+
+\end{document}
+
