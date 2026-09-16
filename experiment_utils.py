@@ -13,11 +13,11 @@ from pathlib import Path
 from typing import Iterable
 
 import numpy as np
+import scipy.linalg
 import torch
 from PIL import Image, ImageDraw
-from torchmetrics.functional.multimodal import clip_score
+from torchmetrics.multimodal import CLIPScore
 from torchmetrics.image.fid import FrechetInceptionDistance
-from torchmetrics.image.kid import KernelInceptionDistance
 from torchvision.transforms import functional as F
 
 
@@ -211,19 +211,42 @@ def load_folder_tensor_uint8(folder: Path, size: int) -> torch.Tensor:
     return torch.cat(tensors, dim=0)
 
 
-def compute_fid(real_images: torch.Tensor, generated_images: torch.Tensor) -> float:
-    metric = FrechetInceptionDistance(normalize=False)
-    metric.update(real_images, real=True)
-    metric.update(generated_images, real=False)
-    return float(metric.compute().item())
+def _extract_inception_features(images_uint8: torch.Tensor) -> np.ndarray:
+    """Extract InceptionV3 2048-d features from uint8 NCHW images. Uses GPU when available."""
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    extractor = FrechetInceptionDistance(feature=2048, normalize=False).to(device)
+    extractor.eval()
+    batch_size = 32
+    all_features: list[np.ndarray] = []
+    with torch.no_grad():
+        for start in range(0, len(images_uint8), batch_size):
+            batch = images_uint8[start : start + batch_size].to(device)
+            feats = extractor.inception(batch)
+            all_features.append(feats.cpu().numpy())
+    return np.concatenate(all_features, axis=0)
 
 
-def compute_kid(real_images: torch.Tensor, generated_images: torch.Tensor, subset_size: int) -> float:
-    metric = KernelInceptionDistance(subset_size=subset_size, normalize=False)
-    metric.update(real_images, real=True)
-    metric.update(generated_images, real=False)
-    mean_value, _ = metric.compute()
-    return float(mean_value.item())
+def _fid_from_features(real_feat: np.ndarray, gen_feat: np.ndarray) -> float:
+    mu_r, mu_g = real_feat.mean(0), gen_feat.mean(0)
+    sigma_r = np.cov(real_feat, rowvar=False) if len(real_feat) > 1 else np.zeros((real_feat.shape[1], real_feat.shape[1]))
+    sigma_g = np.cov(gen_feat, rowvar=False) if len(gen_feat) > 1 else np.zeros((gen_feat.shape[1], gen_feat.shape[1]))
+    diff = mu_r - mu_g
+    covmean = scipy.linalg.sqrtm(sigma_r @ sigma_g)
+    if np.iscomplexobj(covmean):
+        covmean = covmean.real
+    return float(np.dot(diff, diff) + np.trace(sigma_r + sigma_g - 2.0 * covmean))
+
+
+def _kid_from_features(real_feat: np.ndarray, gen_feat: np.ndarray) -> float:
+    """Unbiased MMD with cubic polynomial kernel k(x,y) = (x·y/d + 1)^3."""
+    d = real_feat.shape[1]
+    m, n = len(real_feat), len(gen_feat)
+    kxx = ((real_feat @ real_feat.T) / d + 1.0) ** 3
+    kyy = ((gen_feat @ gen_feat.T) / d + 1.0) ** 3
+    kxy = ((real_feat @ gen_feat.T) / d + 1.0) ** 3
+    np.fill_diagonal(kxx, 0.0)
+    np.fill_diagonal(kyy, 0.0)
+    return float(kxx.sum() / (m * (m - 1)) + kyy.sum() / (n * (n - 1)) - 2.0 * kxy.mean())
 
 
 def bootstrap_distribution(
@@ -234,35 +257,22 @@ def bootstrap_distribution(
     seed: int,
     kid_subset_size: int,
 ) -> dict[str, float]:
-    if metric_name == "fid":
-        point_estimate = compute_fid(real_images, generated_images)
-    elif metric_name == "kid":
-        point_estimate = compute_kid(real_images, generated_images, kid_subset_size)
-    else:
-        raise ValueError(f"Unsupported metric: {metric_name}")
+    """Extract InceptionV3 features once on GPU, then bootstrap over features."""
+    real_feat = _extract_inception_features(real_images)
+    gen_feat = _extract_inception_features(generated_images)
+
+    compute_metric = _fid_from_features if metric_name == "fid" else _kid_from_features
+    point_estimate = compute_metric(real_feat, gen_feat)
 
     if bootstrap_samples <= 1:
-        return {
-            "mean": point_estimate,
-            "std": 0.0,
-            "ci95_low": point_estimate,
-            "ci95_high": point_estimate,
-        }
+        return {"mean": point_estimate, "std": 0.0, "ci95_low": point_estimate, "ci95_high": point_estimate}
 
     rng = np.random.default_rng(seed)
-    real_count = real_images.shape[0]
-    generated_count = generated_images.shape[0]
     metric_values = np.empty(bootstrap_samples, dtype=np.float64)
-
     for idx in range(bootstrap_samples):
-        real_indices = torch.tensor(rng.integers(0, real_count, size=real_count), dtype=torch.long)
-        generated_indices = torch.tensor(rng.integers(0, generated_count, size=generated_count), dtype=torch.long)
-        real_sample = real_images.index_select(0, real_indices)
-        generated_sample = generated_images.index_select(0, generated_indices)
-        if metric_name == "fid":
-            metric_values[idx] = compute_fid(real_sample, generated_sample)
-        else:
-            metric_values[idx] = compute_kid(real_sample, generated_sample, kid_subset_size)
+        r_idx = rng.integers(0, len(real_feat), size=len(real_feat))
+        g_idx = rng.integers(0, len(gen_feat), size=len(gen_feat))
+        metric_values[idx] = compute_metric(real_feat[r_idx], gen_feat[g_idx])
 
     return {
         "mean": point_estimate,
@@ -273,16 +283,18 @@ def bootstrap_distribution(
 
 
 def compute_clip_statistics(folder: Path, prompt_text: str, bootstrap_samples: int, seed: int) -> dict[str, float]:
+    """Compute CLIP scores loading the model once on GPU, processing one image at a time."""
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    clip_metric = CLIPScore(model_name_or_path="openai/clip-vit-base-patch16").to(device)
+    clip_metric.eval()
     scores: list[float] = []
-    for image_path in list_image_files(folder):
-        image = Image.open(image_path).convert("RGB")
-        image_array = np.asarray(image).astype("float32")
-        score = clip_score(
-            torch.from_numpy(image_array).permute(2, 0, 1).unsqueeze(0),
-            [prompt_text],
-            model_name_or_path="openai/clip-vit-base-patch16",
-        ).detach()
-        scores.append(float(score))
+    with torch.no_grad():
+        for image_path in list_image_files(folder):
+            image = Image.open(image_path).convert("RGB")
+            arr = np.asarray(image, dtype=np.uint8)
+            tensor = torch.from_numpy(arr).permute(2, 0, 1).unsqueeze(0).to(device)
+            score = clip_metric(tensor, [prompt_text])
+            scores.append(float(score.detach().cpu()))
     summary = bootstrap_summary(scores, bootstrap_samples, seed)
     summary["sample_count"] = len(scores)
     return summary
@@ -344,11 +356,19 @@ def aggregate_metrics_by_group(rows: list[dict[str, object]], bootstrap_samples:
         }
         for metric_index, metric_name in enumerate(metric_names):
             values = [float(row[f"{metric_name}_mean"]) for row in group_rows]
-            stats = bootstrap_summary(values, bootstrap_samples, seed + metric_index)
-            aggregated[f"{metric_name}_group_mean"] = stats["mean"]
-            aggregated[f"{metric_name}_group_std"] = stats["std"]
-            aggregated[f"{metric_name}_group_ci95_low"] = stats["ci95_low"]
-            aggregated[f"{metric_name}_group_ci95_high"] = stats["ci95_high"]
+            arr = np.array(values)
+            if len(values) < 4:
+                # Too few concepts for bootstrap CI; report min/max instead.
+                aggregated[f"{metric_name}_group_mean"] = float(arr.mean())
+                aggregated[f"{metric_name}_group_std"] = float(arr.std(ddof=1)) if len(values) > 1 else 0.0
+                aggregated[f"{metric_name}_group_ci95_low"] = float(arr.min())
+                aggregated[f"{metric_name}_group_ci95_high"] = float(arr.max())
+            else:
+                stats = bootstrap_summary(values, bootstrap_samples, seed + metric_index)
+                aggregated[f"{metric_name}_group_mean"] = stats["mean"]
+                aggregated[f"{metric_name}_group_std"] = stats["std"]
+                aggregated[f"{metric_name}_group_ci95_low"] = stats["ci95_low"]
+                aggregated[f"{metric_name}_group_ci95_high"] = stats["ci95_high"]
         aggregated_rows.append(aggregated)
     return aggregated_rows
 
