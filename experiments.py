@@ -208,7 +208,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--bootstrap-samples", type=int, default=200)
     parser.add_argument("--metric-seed", type=int, default=42)
     parser.add_argument("--seed-start", type=int, default=2000)
-    parser.add_argument("--kid-subset-size", type=int, default=50)
+    parser.add_argument("--kid-subset-size", type=int, default=19)
     parser.add_argument("--fid-resize", type=int, default=256)
     parser.add_argument("--qualitative-samples", type=int, default=6)
     parser.add_argument("--human-eval-samples", type=int, default=25)

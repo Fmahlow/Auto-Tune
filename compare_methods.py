@@ -28,12 +28,19 @@ def format_ci(mean: float, low: float, high: float, precision: int = 3) -> str:
     return f"{mean:.{precision}f} [{low:.{precision}f}, {high:.{precision}f}]"
 
 
+def _normalize_condition(condition: str) -> str:
+    """Map method-specific fine-tuning labels to a common key for joining."""
+    if condition in ("with_finetuning", "with_baseline"):
+        return "fine_tuned"
+    return condition
+
+
 def key_individual(row: dict[str, str]) -> tuple[str, str]:
-    return row["concept_safe"], row["condition"]
+    return row["concept_safe"], _normalize_condition(row["condition"])
 
 
 def key_group(row: dict[str, str]) -> tuple[str, str]:
-    return row["group"], row["condition"]
+    return row["group"], _normalize_condition(row["condition"])
 
 
 def merge_rows(

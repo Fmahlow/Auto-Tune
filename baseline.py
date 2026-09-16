@@ -142,7 +142,6 @@ def train_textual_inversion(
         "launch",
         str(train_script),
         f"--pretrained_model_name_or_path={model_name}",
-        f"--pretrained_vae_model_name_or_path={vae_path}",
         f"--train_data_dir={concept.folder}",
         f"--output_dir={concept_output}",
         f"--placeholder_token={token}",
@@ -157,7 +156,7 @@ def train_textual_inversion(
         f"--checkpointing_steps={checkpoint_steps}",
         f"--save_steps={save_steps}",
         f"--validation_prompt=a photo of {token}",
-        "--validation_epochs=25",
+        "--validation_steps=500",
     ]
     if enable_xformers:
         cmd.append("--enable_xformers_memory_efficient_attention")
@@ -210,7 +209,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-train-steps", type=int, default=3000)
     parser.add_argument("--checkpointing-steps", type=int, default=500)
     parser.add_argument("--save-steps", type=int, default=500)
-    parser.add_argument("--mixed-precision", default="fp16")
+    parser.add_argument("--mixed-precision", default="bf16")
     parser.add_argument("--enable-xformers", action="store_true")
     parser.add_argument("--num-images", type=int, default=1000)
     parser.add_argument("--num-inference-steps", type=int, default=4)
@@ -218,7 +217,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--bootstrap-samples", type=int, default=200)
     parser.add_argument("--metric-seed", type=int, default=42)
     parser.add_argument("--seed-start", type=int, default=1000)
-    parser.add_argument("--kid-subset-size", type=int, default=50)
+    parser.add_argument("--kid-subset-size", type=int, default=19)
     parser.add_argument("--fid-resize", type=int, default=256)
     parser.add_argument("--qualitative-samples", type=int, default=6)
     parser.add_argument("--human-eval-samples", type=int, default=25)

@@ -16,6 +16,27 @@ Este documento lista tudo o que ainda precisa rodar no servidor para que o paper
 
 ---
 
+## Status das correções (Parte 0)
+
+| Item | Status | Detalhe |
+|---|---|---|
+| 0.1 Argumentos inválidos em `baseline.py` | ✅ Corrigido | Removido `--pretrained_vae_model_name_or_path`; `--validation_epochs` → `--validation_steps=500` |
+| 0.2 TI em fp16 gera NaN | ✅ Corrigido | Default `--mixed-precision` alterado para `bf16` em `baseline.py` |
+| 0.3 `--kid-subset-size 50` quebra KID | ✅ Corrigido | Default alterado para 19 em `baseline.py` e `experiments.py` |
+| 0.4 Bootstrap inviável (CPU, reinstancia InceptionV3 200×) | ✅ Corrigido | Features extraídas uma vez na GPU; bootstrap sobre numpy arrays |
+| 0.5 CLIP recarrega modelo por imagem | ✅ Corrigido | `CLIPScore` instanciado uma vez por pasta, na GPU |
+| 0.6 `compare_methods.py` não compara DreamBooth com TI | ✅ Corrigido | `with_finetuning` e `with_baseline` mapeados para chave `fine_tuned` no join |
+| 0.7 IC95% por grupo degenerado (2–3 conceitos) | ✅ Corrigido | Grupos com <4 conceitos reportam min/max em vez de IC (campos mantidos, semântica diferente) |
+| 0.8 Trabalho duplicado (opcional) | ⏳ Pendente | Pode fazer no servidor via symlinks; não é bloqueante |
+
+**Problema de ambiente detectado (não estava no plano original):**
+O ambiente local (`numpy 1.24.4` + `transformers` antiga) quebra o CLIP com `AttributeError: module 'numpy' has no attribute 'typeDict'`. No servidor, corrigir antes de rodar a avaliação:
+```bash
+pip install --upgrade transformers
+```
+
+---
+
 ## Parte 0 — Correções obrigatórias no código ANTES de subir
 
 Os scripts atuais **não rodam como estão**, ou rodam de forma inviável. Tudo abaixo foi verificado lendo o código
