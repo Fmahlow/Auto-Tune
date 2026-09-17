@@ -1,0 +1,17 @@
+concept,concept_safe,blind_id,condition,folder
+chamanto,chamanto,A,with_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_chamanto_with_finetuning
+chamanto,chamanto,B,without_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_chamanto_without_finetuning
+chaneques,chaneques,A,without_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_chaneques_without_finetuning
+chaneques,chaneques,B,with_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_chaneques_with_finetuning
+cuscuz,cuscuz,A,with_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_cuscuz_with_finetuning
+cuscuz,cuscuz,B,without_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_cuscuz_without_finetuning
+jian,jian,A,without_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_jian_without_finetuning
+jian,jian,B,with_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_jian_with_finetuning
+lokum,lokum,A,without_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_lokum_without_finetuning
+lokum,lokum,B,with_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_lokum_with_finetuning
+patuá,patua,A,with_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_patua_with_finetuning
+patuá,patua,B,without_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_patua_without_finetuning
+paçoca,pacoca,A,with_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_pacoca_with_finetuning
+paçoca,pacoca,B,without_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_pacoca_without_finetuning
+saci,saci,A,without_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_saci_without_finetuning
+saci,saci,B,with_finetuning,/workspace/outputs/dreambooth/output_a_photo_of_saci_with_finetuning

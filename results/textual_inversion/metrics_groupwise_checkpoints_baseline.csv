@@ -1,0 +1,1 @@
+group,method,condition,num_concepts,total_sample_count,clip_group_mean,clip_group_std,clip_group_ci95_low,clip_group_ci95_high,fid_group_mean,fid_group_std,fid_group_ci95_low,fid_group_ci95_high,kid_group_mean,kid_group_std,kid_group_ci95_low,kid_group_ci95_high

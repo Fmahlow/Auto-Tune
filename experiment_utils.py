@@ -13,7 +13,6 @@ from pathlib import Path
 from typing import Iterable
 
 import numpy as np
-import scipy.linalg
 import torch
 from PIL import Image, ImageDraw
 from torchmetrics.multimodal import CLIPScore
@@ -211,42 +210,73 @@ def load_folder_tensor_uint8(folder: Path, size: int) -> torch.Tensor:
     return torch.cat(tensors, dim=0)
 
 
-def _extract_inception_features(images_uint8: torch.Tensor) -> np.ndarray:
-    """Extract InceptionV3 2048-d features from uint8 NCHW images. Uses GPU when available."""
+def _extract_inception_features(images_uint8: torch.Tensor) -> torch.Tensor:
+    """Extract InceptionV3 2048-d features from uint8 NCHW images. Uses GPU when available.
+    Returns a double-precision tensor kept on the extraction device (GPU when available) so
+    the whole bootstrap loop below can run without any GPU<->CPU round trips."""
     device = "cuda" if torch.cuda.is_available() else "cpu"
     extractor = FrechetInceptionDistance(feature=2048, normalize=False).to(device)
     extractor.eval()
     batch_size = 32
-    all_features: list[np.ndarray] = []
+    all_features: list[torch.Tensor] = []
     with torch.no_grad():
         for start in range(0, len(images_uint8), batch_size):
             batch = images_uint8[start : start + batch_size].to(device)
             feats = extractor.inception(batch)
-            all_features.append(feats.cpu().numpy())
-    return np.concatenate(all_features, axis=0)
+            all_features.append(feats.double())
+    return torch.cat(all_features, dim=0)
 
 
-def _fid_from_features(real_feat: np.ndarray, gen_feat: np.ndarray) -> float:
+def _trace_sqrtm_product_psd(sigma_r: torch.Tensor, sigma_g: torch.Tensor) -> torch.Tensor:
+    """trace(sqrtm(sigma_r @ sigma_g)) for symmetric PSD sigma_r, sigma_g, computed via
+    eigendecomposition instead of scipy.linalg.sqrtm's CPU Schur algorithm.
+    scipy.linalg.sqrtm on a 2048x2048 matrix can take seconds per call; with a 1000-sample
+    bootstrap over dozens of folders that becomes hours. The identity
+    trace(sqrtm(A @ B)) == trace(sqrtm(A^{1/2} @ B @ A^{1/2})) for symmetric PSD A, B lets us
+    replace the general matrix square root with two symmetric eigh calls (fast, GPU-able) and
+    a sum of sqrt(eigenvalues) -- the full sqrtm matrix itself is never needed, only its trace.
+    """
+    sr = (sigma_r + sigma_r.T) / 2
+    sg = (sigma_g + sigma_g.T) / 2
+    eigvals_r, eigvecs_r = torch.linalg.eigh(sr)
+    eigvals_r = torch.clamp(eigvals_r, min=0)
+    sr_sqrt = (eigvecs_r * torch.sqrt(eigvals_r)) @ eigvecs_r.T
+    b = sr_sqrt @ sg @ sr_sqrt
+    b = (b + b.T) / 2
+    eigvals_b = torch.linalg.eigvalsh(b)
+    eigvals_b = torch.clamp(eigvals_b, min=0)
+    return torch.sum(torch.sqrt(eigvals_b))
+
+
+def _cov(feat: torch.Tensor) -> torch.Tensor:
+    if feat.shape[0] <= 1:
+        d = feat.shape[1]
+        return torch.zeros((d, d), device=feat.device, dtype=feat.dtype)
+    centered = feat - feat.mean(dim=0, keepdim=True)
+    return (centered.T @ centered) / (feat.shape[0] - 1)
+
+
+def _fid_from_features(real_feat: torch.Tensor, gen_feat: torch.Tensor) -> float:
     mu_r, mu_g = real_feat.mean(0), gen_feat.mean(0)
-    sigma_r = np.cov(real_feat, rowvar=False) if len(real_feat) > 1 else np.zeros((real_feat.shape[1], real_feat.shape[1]))
-    sigma_g = np.cov(gen_feat, rowvar=False) if len(gen_feat) > 1 else np.zeros((gen_feat.shape[1], gen_feat.shape[1]))
+    sigma_r = _cov(real_feat)
+    sigma_g = _cov(gen_feat)
     diff = mu_r - mu_g
-    covmean = scipy.linalg.sqrtm(sigma_r @ sigma_g)
-    if np.iscomplexobj(covmean):
-        covmean = covmean.real
-    return float(np.dot(diff, diff) + np.trace(sigma_r + sigma_g - 2.0 * covmean))
+    trace_sqrt = _trace_sqrtm_product_psd(sigma_r, sigma_g)
+    result = torch.dot(diff, diff) + torch.trace(sigma_r) + torch.trace(sigma_g) - 2.0 * trace_sqrt
+    return float(result.item())
 
 
-def _kid_from_features(real_feat: np.ndarray, gen_feat: np.ndarray) -> float:
+def _kid_from_features(real_feat: torch.Tensor, gen_feat: torch.Tensor) -> float:
     """Unbiased MMD with cubic polynomial kernel k(x,y) = (x·y/d + 1)^3."""
     d = real_feat.shape[1]
-    m, n = len(real_feat), len(gen_feat)
+    m, n = real_feat.shape[0], gen_feat.shape[0]
     kxx = ((real_feat @ real_feat.T) / d + 1.0) ** 3
     kyy = ((gen_feat @ gen_feat.T) / d + 1.0) ** 3
     kxy = ((real_feat @ gen_feat.T) / d + 1.0) ** 3
-    np.fill_diagonal(kxx, 0.0)
-    np.fill_diagonal(kyy, 0.0)
-    return float(kxx.sum() / (m * (m - 1)) + kyy.sum() / (n * (n - 1)) - 2.0 * kxy.mean())
+    kxx.fill_diagonal_(0.0)
+    kyy.fill_diagonal_(0.0)
+    result = kxx.sum() / (m * (m - 1)) + kyy.sum() / (n * (n - 1)) - 2.0 * kxy.mean()
+    return float(result.item())
 
 
 def bootstrap_distribution(
@@ -257,9 +287,12 @@ def bootstrap_distribution(
     seed: int,
     kid_subset_size: int,
 ) -> dict[str, float]:
-    """Extract InceptionV3 features once on GPU, then bootstrap over features."""
+    """Extract InceptionV3 features once on GPU, then bootstrap over features -- resampling,
+    covariance, and the FID trace term all stay on the GPU as torch tensors so a 1000-sample
+    bootstrap takes seconds instead of hours."""
     real_feat = _extract_inception_features(real_images)
     gen_feat = _extract_inception_features(generated_images)
+    device = real_feat.device
 
     compute_metric = _fid_from_features if metric_name == "fid" else _kid_from_features
     point_estimate = compute_metric(real_feat, gen_feat)
@@ -270,8 +303,8 @@ def bootstrap_distribution(
     rng = np.random.default_rng(seed)
     metric_values = np.empty(bootstrap_samples, dtype=np.float64)
     for idx in range(bootstrap_samples):
-        r_idx = rng.integers(0, len(real_feat), size=len(real_feat))
-        g_idx = rng.integers(0, len(gen_feat), size=len(gen_feat))
+        r_idx = torch.from_numpy(rng.integers(0, len(real_feat), size=len(real_feat))).to(device)
+        g_idx = torch.from_numpy(rng.integers(0, len(gen_feat), size=len(gen_feat))).to(device)
         metric_values[idx] = compute_metric(real_feat[r_idx], gen_feat[g_idx])
 
     return {

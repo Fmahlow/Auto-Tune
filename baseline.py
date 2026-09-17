@@ -99,20 +99,29 @@ def generate_images(
     num_inference_steps: int,
     guidance_scale: float,
     seed_start: int,
+    batch_size: int = 1,
 ) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     manifest_rows: list[dict[str, object]] = []
-    for image_index in range(n_images):
-        generator = torch.Generator(device="cuda").manual_seed(seed_start + image_index)
-        image = pipe(
-            prompt=prompt,
+    image_index = 0
+    while image_index < n_images:
+        current_batch = min(batch_size, n_images - image_index)
+        generators = [
+            torch.Generator(device="cuda").manual_seed(seed_start + image_index + offset)
+            for offset in range(current_batch)
+        ]
+        result = pipe(
+            prompt=[prompt] * current_batch,
             num_inference_steps=num_inference_steps,
             guidance_scale=guidance_scale,
-            generator=generator,
-        ).images[0]
-        image_path = out_dir / f"image_{image_index + 1:04d}.png"
-        image.save(image_path)
-        manifest_rows.append({"image_path": str(image_path), "seed": seed_start + image_index, "prompt": prompt})
+            generator=generators,
+        )
+        for offset, image in enumerate(result.images):
+            idx = image_index + offset
+            image_path = out_dir / f"image_{idx + 1:04d}.png"
+            image.save(image_path)
+            manifest_rows.append({"image_path": str(image_path), "seed": seed_start + idx, "prompt": prompt})
+        image_index += current_batch
     write_csv(out_dir / "generation_manifest.csv", ["image_path", "seed", "prompt"], manifest_rows)
 
 
@@ -212,6 +221,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mixed-precision", default="bf16")
     parser.add_argument("--enable-xformers", action="store_true")
     parser.add_argument("--num-images", type=int, default=1000)
+    parser.add_argument("--gen-batch-size", type=int, default=8)
+    parser.add_argument(
+        "--without-finetuning-source",
+        type=Path,
+        default=None,
+        help="Output root of a DreamBooth run whose without_finetuning folders should be reused "
+        "instead of regenerating the base-model images again.",
+    )
     parser.add_argument("--num-inference-steps", type=int, default=4)
     parser.add_argument("--guidance-scale", type=float, default=8.0)
     parser.add_argument("--bootstrap-samples", type=int, default=200)
@@ -290,16 +307,29 @@ def main() -> None:
         for concept_index, concept in enumerate(concepts):
             concept_seed = args.seed_start + concept_index * (args.num_images * 10)
             without_dir = args.output_root / f"output_a_photo_of_{concept.safe_name}_without_finetuning"
-            progress.set_stage("generation", concept.name, "without_finetuning")
-            generate_images(
-                pipe=pipe,
-                prompt=concept.prompt_base,
-                out_dir=without_dir,
-                n_images=args.num_images,
-                num_inference_steps=args.num_inference_steps,
-                guidance_scale=args.guidance_scale,
-                seed_start=concept_seed,
-            )
+            reused_without_dir = False
+            if args.without_finetuning_source is not None:
+                source_dir = (
+                    args.without_finetuning_source / f"output_a_photo_of_{concept.safe_name}_without_finetuning"
+                )
+                if source_dir.exists() and any(source_dir.glob("image_*.png")):
+                    without_dir.parent.mkdir(parents=True, exist_ok=True)
+                    if not without_dir.exists():
+                        without_dir.symlink_to(source_dir.resolve(), target_is_directory=True)
+                    reused_without_dir = True
+                    progress.log(f"Reusing without_finetuning images for {concept.name} from {source_dir}")
+            if not reused_without_dir:
+                progress.set_stage("generation", concept.name, "without_finetuning")
+                generate_images(
+                    pipe=pipe,
+                    prompt=concept.prompt_base,
+                    out_dir=without_dir,
+                    n_images=args.num_images,
+                    num_inference_steps=args.num_inference_steps,
+                    guidance_scale=args.guidance_scale,
+                    seed_start=concept_seed,
+                    batch_size=args.gen_batch_size,
+                )
             progress.advance(stage="generation", concept=concept.name, detail="without_finetuning_done")
 
             final_embedding = find_textual_inversion_embedding(train_dirs[concept.safe_name], None)
@@ -315,6 +345,7 @@ def main() -> None:
                 num_inference_steps=args.num_inference_steps,
                 guidance_scale=args.guidance_scale,
                 seed_start=concept_seed,
+                batch_size=args.gen_batch_size,
             )
             unload_textual_inversion(pipe, token)
             progress.advance(stage="generation", concept=concept.name, detail="with_baseline_done")
@@ -336,6 +367,7 @@ def main() -> None:
                     num_inference_steps=args.num_inference_steps,
                     guidance_scale=args.guidance_scale,
                     seed_start=concept_seed,
+                    batch_size=args.gen_batch_size,
                 )
                 unload_textual_inversion(pipe, token)
                 progress.advance(stage="generation", concept=concept.name, detail=f"checkpoint_{checkpoint}_done")
