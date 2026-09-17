@@ -13,14 +13,21 @@ Our goal was to train generative models (e.g., **Stable Diffusion XL**) to learn
 - Automated image scraping using Selenium
 - Model fine-tuning with LoRA
 - Image generation accelerated by Latent Consistency Models (LCMs)
-- Evaluation using CLIP Score and Fréchet Inception Distance (FID)
+- Evaluation using CLIP Score, Fréchet Inception Distance (FID), and Kernel Inception Distance (KID)
+
+The generated images, the trained LoRA weights, and the Textual Inversion embeddings are available at
+https://huggingface.co/datasets/FelipeMahlow/auto-tune-generated-images
 
 ---
 
 ## 📁 Repository Structure
 
-- **Folders like `saci`, `patuá`, `lokum`, etc.**  
-  These contain **training images collected via web scraping**, used for fine-tuning each specific concept.
+- **Training images**  
+  The images used for fine-tuning were collected from Google Images and may be protected by
+  third-party copyright, so they are **not redistributed here**. They can be collected again with
+  the scraping code in this repository, using the concept names listed in the paper (Table 1);
+  note that search results change over time. The pipeline also accepts a folder of images
+  provided by the user, from any source.
 
 - **CSV files**  
   Files such as `clip_score.csv`, `fid_scores_results.csv`, and their `_checkpoints` versions contain **quantitative metrics** computed during training, including **CLIP Scores** (semantic alignment) and **FID scores** (visual similarity to real data).
