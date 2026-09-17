@@ -1,0 +1,33 @@
+[2026-09-16 17:31:52] Starting run for concepts: ['chamanto']
+[2026-09-16 17:31:52] Using training script: /workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py
+[2026-09-16 17:31:52] Training chamanto
+[2026-09-16 17:31:52] Starting run for concepts: ['chaneques']
+[2026-09-16 17:31:52] Using training script: /workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py
+[2026-09-16 17:31:52] Training chaneques
+[2026-09-16 19:00:50] Starting run for concepts: ['cuscuz']
+[2026-09-16 19:00:50] Using training script: /workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py
+[2026-09-16 19:00:50] Training cuscuz
+[2026-09-16 20:03:02] Starting run for concepts: ['jian']
+[2026-09-16 20:03:02] Using training script: /workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py
+[2026-09-16 20:03:02] Training jian
+[2026-09-16 20:37:02] Starting run for concepts: ['jian']
+[2026-09-16 20:37:02] Starting run for concepts: ['lokum']
+[2026-09-16 20:37:02] Using training script: /workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py
+[2026-09-16 20:37:02] Training lokum
+[2026-09-16 21:19:42] Starting run for concepts: ['lokum']
+[2026-09-16 21:19:42] Starting run for concepts: ['paçoca']
+[2026-09-16 21:19:42] Using training script: /workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py
+[2026-09-16 21:19:42] Training paçoca
+[2026-09-16 22:01:12] Starting run for concepts: ['paçoca']
+[2026-09-16 22:01:12] Starting run for concepts: ['patuá']
+[2026-09-16 22:01:12] Using training script: /workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py
+[2026-09-16 22:01:12] Training patuá
+[2026-09-16 22:43:22] Starting run for concepts: ['patuá']
+[2026-09-16 22:43:22] Starting run for concepts: ['saci']
+[2026-09-16 22:43:22] Using training script: /workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py
+[2026-09-16 22:43:22] Training saci
+[2026-09-17 01:45:35] Starting run for concepts: ['saci']
+[2026-09-17 01:45:35] Using training script: /workspace/diffusers/examples/dreambooth/train_dreambooth_lora_sdxl.py
+[2026-09-17 01:45:35] Training saci
+[2026-09-17 02:45:23] Starting run for concepts: ['chamanto', 'chaneques', 'cuscuz', 'jian', 'lokum', 'patuá', 'paçoca', 'saci']
+[2026-09-17 09:54:17] Starting run for concepts: ['chamanto', 'chaneques', 'cuscuz', 'jian', 'lokum', 'patuá', 'paçoca', 'saci']

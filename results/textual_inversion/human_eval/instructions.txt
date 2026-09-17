@@ -1,0 +1,5 @@
+Human evaluation protocol
+Rate each image on a 1-5 scale for cultural recognizability, cultural fidelity, and overall quality.
+Use raters familiar with the corresponding cultural concept whenever possible.
+Keep blind_id hidden from raters; it maps to the actual condition in human_eval_key.csv.
+Record optional free-text notes for obvious artifacts, mismatches, or culturally salient details.

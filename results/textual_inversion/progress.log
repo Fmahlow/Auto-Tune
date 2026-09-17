@@ -1,0 +1,40 @@
+[2026-09-16 22:43:40] Starting run for concepts: ['chamanto']
+[2026-09-16 22:43:40] Using training script: /workspace/diffusers/examples/textual_inversion/textual_inversion_sdxl.py
+[2026-09-16 22:43:40] Training chamanto
+[2026-09-16 23:05:14] Starting run for concepts: ['chaneques']
+[2026-09-16 23:05:14] Using training script: /workspace/diffusers/examples/textual_inversion/textual_inversion_sdxl.py
+[2026-09-16 23:05:14] Training chaneques
+[2026-09-16 23:16:09] Starting run for concepts: ['chamanto']
+[2026-09-16 23:16:16] Reusing without_finetuning images for chamanto from /workspace/outputs/dreambooth/output_a_photo_of_chamanto_without_finetuning
+[2026-09-16 23:26:17] Starting run for concepts: ['cuscuz']
+[2026-09-16 23:26:17] Using training script: /workspace/diffusers/examples/textual_inversion/textual_inversion_sdxl.py
+[2026-09-16 23:26:17] Training cuscuz
+[2026-09-16 23:29:32] Starting run for concepts: ['chaneques']
+[2026-09-16 23:29:39] Reusing without_finetuning images for chaneques from /workspace/outputs/dreambooth/output_a_photo_of_chaneques_without_finetuning
+[2026-09-16 23:46:25] Starting run for concepts: ['cuscuz']
+[2026-09-16 23:46:25] Starting run for concepts: ['jian']
+[2026-09-16 23:46:25] Using training script: /workspace/diffusers/examples/textual_inversion/textual_inversion_sdxl.py
+[2026-09-16 23:46:25] Training jian
+[2026-09-16 23:46:30] Reusing without_finetuning images for cuscuz from /workspace/outputs/dreambooth/output_a_photo_of_cuscuz_without_finetuning
+[2026-09-17 00:06:24] Starting run for concepts: ['jian']
+[2026-09-17 00:06:24] Starting run for concepts: ['lokum']
+[2026-09-17 00:06:24] Using training script: /workspace/diffusers/examples/textual_inversion/textual_inversion_sdxl.py
+[2026-09-17 00:06:24] Training lokum
+[2026-09-17 00:06:30] Reusing without_finetuning images for jian from /workspace/outputs/dreambooth/output_a_photo_of_jian_without_finetuning
+[2026-09-17 00:26:03] Starting run for concepts: ['paçoca']
+[2026-09-17 00:26:03] Using training script: /workspace/diffusers/examples/textual_inversion/textual_inversion_sdxl.py
+[2026-09-17 00:26:03] Training paçoca
+[2026-09-17 00:26:03] Starting run for concepts: ['lokum']
+[2026-09-17 00:26:08] Reusing without_finetuning images for lokum from /workspace/outputs/dreambooth/output_a_photo_of_lokum_without_finetuning
+[2026-09-17 00:45:42] Starting run for concepts: ['patuá']
+[2026-09-17 00:45:42] Using training script: /workspace/diffusers/examples/textual_inversion/textual_inversion_sdxl.py
+[2026-09-17 00:45:42] Training patuá
+[2026-09-17 00:45:42] Starting run for concepts: ['paçoca']
+[2026-09-17 00:45:47] Reusing without_finetuning images for paçoca from /workspace/outputs/dreambooth/output_a_photo_of_pacoca_without_finetuning
+[2026-09-17 01:05:14] Starting run for concepts: ['saci']
+[2026-09-17 01:05:14] Using training script: /workspace/diffusers/examples/textual_inversion/textual_inversion_sdxl.py
+[2026-09-17 01:05:14] Training saci
+[2026-09-17 01:05:14] Starting run for concepts: ['patuá']
+[2026-09-17 01:05:20] Reusing without_finetuning images for patuá from /workspace/outputs/dreambooth/output_a_photo_of_patua_without_finetuning
+[2026-09-17 01:24:42] Starting run for concepts: ['saci']
+[2026-09-17 12:08:52] Starting run for concepts: ['chamanto', 'chaneques', 'cuscuz', 'jian', 'lokum', 'patuá', 'paçoca', 'saci']
