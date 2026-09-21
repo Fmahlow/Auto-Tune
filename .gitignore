@@ -12,3 +12,6 @@ results/**/.ipynb_checkpoints/
 /paçoca/
 /saci/
 results/*/qualitative/
+
+# recompute scratch (features, HF cache)
+scripts/recompute/work/

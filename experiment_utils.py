@@ -300,12 +300,13 @@ def bootstrap_distribution(
     if bootstrap_samples <= 1:
         return {"mean": point_estimate, "std": 0.0, "ci95_low": point_estimate, "ci95_high": point_estimate}
 
+    # Only the generated images are resampled: the ~20 real images are the fixed reference, and
+    # resampling them too duplicates images and inflates FID/KID (intervals then miss the estimate).
     rng = np.random.default_rng(seed)
     metric_values = np.empty(bootstrap_samples, dtype=np.float64)
     for idx in range(bootstrap_samples):
-        r_idx = torch.from_numpy(rng.integers(0, len(real_feat), size=len(real_feat))).to(device)
         g_idx = torch.from_numpy(rng.integers(0, len(gen_feat), size=len(gen_feat))).to(device)
-        metric_values[idx] = compute_metric(real_feat[r_idx], gen_feat[g_idx])
+        metric_values[idx] = compute_metric(real_feat, gen_feat[g_idx])
 
     return {
         "mean": point_estimate,
