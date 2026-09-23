@@ -349,7 +349,8 @@ Table~\ref{tab:clip-fid-results} presents a summary of the evaluation outcomes u
     \centering
     \caption{\textcolor{blue}{CLIP Score, FID, and KID for each concept, before and after fine-tuning (3000 training steps), computed over 1000 generated images per condition. ``After'' columns report the point estimate and, in brackets, the 95\% bootstrap confidence interval (1000 resamples of the generated images, with the real reference set held fixed); ``Before'' columns report the point estimate only. Higher CLIP Score and lower FID/KID are better. The best post-training value of each metric is shown in bold.}}
     \label{tab:clip-fid-results}
-    \resizebox{\textwidth}{!}{%
+    \fontsize{7}{8.5}\selectfont
+    \setlength{\tabcolsep}{2pt}
     \begin{tabular}{@{}lcccccc@{}}
         \toprule
         & \multicolumn{2}{c}{\textbf{CLIP Score} $\uparrow$} & \multicolumn{2}{c}{\textbf{FID} $\downarrow$} & \multicolumn{2}{c}{\textbf{KID} $\downarrow$} \\
@@ -365,7 +366,7 @@ Table~\ref{tab:clip-fid-results} presents a summary of the evaluation outcomes u
         \textit{Chamanto}   & 16.53 & 30.36 [30.13, 30.58] & 365.3 & 204.2 [201.1, 208.0] & 0.160 & \textbf{0.047 [0.045, 0.050]} \\
         \textit{Patu\'a}    & 18.54 & 30.15 [30.03, 30.27] & 354.6 & 218.9 [217.4, 221.1] & 0.166 & 0.062 [0.060, 0.065] \\
         \bottomrule
-    \end{tabular}}
+    \end{tabular}
 \end{table}
 
 As observed in Table~\ref{tab:clip-fid-results}, \textcolor{blue}{the post-training results show higher CLIP Scores and lower FID values for all concepts, and lower KID values for seven of the eight concepts, indicating a substantial improvement} in both semantic alignment and image quality. \textcolor{blue}{The exception is \textit{Saci}, whose KID is slightly higher after fine-tuning ($0.145$ vs.\ $0.132$), and whose post-training FID is also the highest among all concepts; \textit{Chaneques}, the other folklore being, shows only a small KID decrease ($0.097$ to $0.082$). Both results are consistent with the higher semantic ambiguity of this category discussed in the group-level analysis below.} \textcolor{blue}{The 95\% confidence intervals are narrow for all three metrics (at most $\pm 0.35$ around the mean for CLIP Score, $\pm 6$ FID points, and $\pm 0.005$ KID) and no post-training interval contains the corresponding before-training value, so both the improvements and the single deterioration (the KID of \textit{Saci}) are larger than the sampling variability of the estimates.} The lower FID and KID scores suggest that the \textcolor{blue}{feature distribution of the model's outputs became closer to that of the real images of each concept}, while the increase in CLIP Score reflects a better match between images and their corresponding textual descriptions.
@@ -405,7 +406,8 @@ The zero point on the $x$-axis represents the model before fine-tuning, meaning 
     \centering
     \caption{\textcolor{blue}{DreamBooth+LoRA (DB) vs.\ Textual Inversion (TI) after fine-tuning/training (1000 generated images per condition). $\Delta$ is DB $-$ TI; negative $\Delta$FID/KID and positive $\Delta$CLIP favor DreamBooth+LoRA. Bottom rows aggregate by concept group.}}
     \label{tab:ti-comparison}
-    \resizebox{\textwidth}{!}{%
+    \fontsize{7}{8.5}\selectfont
+    \setlength{\tabcolsep}{2pt}
     \begin{tabular}{@{}lcccccccccc@{}}
         \toprule
         & \multicolumn{3}{c}{\textbf{CLIP Score} $\uparrow$} & \multicolumn{3}{c}{\textbf{FID} $\downarrow$} & \multicolumn{3}{c}{\textbf{KID} $\downarrow$} & \\
@@ -425,7 +427,7 @@ The zero point on the $x$-axis represents the model before fine-tuning, meaning 
         Folklore beings     & 28.25 & 19.72 & \textbf{+8.53}  & 280.5 & 367.1 & \textbf{$-$86.6}  & 0.113 & 0.115 & $-$0.002 & 845 \\
         Artifacts/clothing  & 29.27 & 20.67 & \textbf{+8.60}  & 221.3 & 340.9 & \textbf{$-$119.6} & 0.058 & 0.140 & \textbf{$-$0.082} & 819 \\
         \bottomrule
-    \end{tabular}}
+    \end{tabular}
 \end{table}
 
 \begin{figure}[htbp]
