@@ -62,24 +62,34 @@ def main():
         fid[c][step] = float(row["fid_sub100"] or 0) if step in (0, 3000) else float(row["fid"])
         kid[c][step] = float(row["kid_sub100"] or 0) if step in (0, 3000) else float(row["kid"])
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.2))
+    # Keep the PDF close to its final width in the manuscript, so font sizes
+    # remain readable after LaTeX scales it to \linewidth.
+    plt.rcParams.update({
+        "font.size": 9,
+        "axes.labelsize": 9,
+        "xtick.labelsize": 8,
+        "ytick.labelsize": 8,
+        "legend.fontsize": 8,
+    })
+    fig, axes = plt.subplots(1, 3, figsize=(7.4, 3.5))
     for ax, data, title, ylabel in (
         (axes[0], clip, "(a) CLIP Score", "CLIP Score"),
-        (axes[1], fid, "(b) FID (100 images per point)", "FID"),
-        (axes[2], kid, "(c) KID (100 images per point)", "KID"),
+        (axes[1], fid, "(b) FID\n(100 images per point)", "FID"),
+        (axes[2], kid, "(c) KID\n(100 images per point)", "KID"),
     ):
         for c in ORDER:
             xs = [s for s in STEPS if s in data[c]]
-            ax.plot(xs, [data[c][s] for s in xs], marker="o", markersize=4,
-                    color=COLORS[c], label=LABELS[c], linewidth=1.5)
-        ax.set_title(title, fontsize=11)
+            ax.plot(xs, [data[c][s] for s in xs], marker="o", markersize=3,
+                    color=COLORS[c], label=LABELS[c], linewidth=1.2)
+        ax.set_title(title, fontsize=10)
         ax.set_xlabel("Training steps")
         ax.set_ylabel(ylabel)
-        ax.set_xticks(STEPS)
+        ax.set_xticks(STEPS[::2])
         ax.grid(alpha=0.3)
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=8, frameon=False, bbox_to_anchor=(0.5, -0.02))
-    fig.tight_layout(rect=(0, 0.06, 1, 1))
+    fig.legend(handles, labels, loc="lower center", ncol=4, frameon=False,
+               bbox_to_anchor=(0.5, 0.005))
+    fig.tight_layout(rect=(0, 0.12, 1, 1), w_pad=1.6)
     out = REPO / "paper_tex" / "fig_3_paper.pdf"
     fig.savefig(out, bbox_inches="tight")
     WORK.mkdir(parents=True, exist_ok=True)
