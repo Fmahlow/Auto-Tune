@@ -45,7 +45,6 @@
 \usepackage{multirow}%
 \usepackage{amsmath,amssymb,amsfonts}%
 \usepackage{amsthm}%
-\usepackage{mathrsfs}%
 \usepackage[title]{appendix}%
 \usepackage{xcolor}%
 \usepackage{textcomp}%
@@ -185,7 +184,7 @@ While the methods discussed above are highly impactful in their respective areas
 
 This section details the methodology employed to develop and implement the pipeline. The methodology comprises multiple stages, including image scraping, model training, and image generation, facilitated by a web-based user interface. Additionally, we present the criteria used for \textcolor{blue}{selecting the concepts that serve as test cases} in our study and, finally, provide the theoretical foundation necessary to understand the metrics used for evaluation.
 
-\paragraph{\textcolor{blue}{Role of LoRA and LCM in our system.}}
+\paragraph*{\textcolor{blue}{Role of LoRA and LCM in our system.}}
 \textcolor{blue}{We emphasize that our contribution is primarily a systems and methodology pipeline focused on automation, reproducibility, and cultural applicability, rather than on proposing new model architectures. In this pipeline, \emph{training-time} concept adaptation is performed through LoRA fine-tuning (Section~\ref{sec:training}), whereas \emph{inference-time} acceleration is achieved via Latent Consistency Model (LCM) scheduling (Section~\ref{sec:generation}), enabling high-quality generations with substantially fewer sampling steps.}
 
 
@@ -211,7 +210,7 @@ For efficient training, we use mixed precision (\texttt{fp16}), a batch size of 
 
 To enhance computational efficiency, we leverage \texttt{xFormers}\footnote{\url{https://github.com/facebookresearch/xformers}} for memory-efficient attention and utilize the $8$-bit Adam optimizer to reduce memory consumption while maintaining effective weight updates. The trained model is stored in an output directory dynamically generated based on a timestamp. Upon completion, the fine-tuned model weights are saved and can be reloaded for inference.
 
-\paragraph{\textcolor{blue}{Hardware.}}
+\paragraph*{\textcolor{blue}{Hardware.}}
 \textcolor{blue}{The results reported in this revision (Table~\ref{tab:clip-fid-results}, Figure~\ref{fig3}, and the Textual Inversion comparison in Section~\ref{sec:ti-comparison}) were produced by fully retraining all models on a cloud instance equipped with one NVIDIA H200 GPU (143\,GB VRAM), 256 logical CPUs, and approximately 1.5\,TB of system RAM (our original submission used an NVIDIA A40 GPU with 48\,GB VRAM; both configurations use the hyperparameters described above). The qualitative examples in Figures~\ref{fig1} and~\ref{fig2} were generated with the models trained for the original submission. With a physical batch size of $2$ and no gradient accumulation (mathematically equivalent to the batch size $1$ with accumulation over $2$ steps used for the original submission, since both give the same effective batch size, but with less overhead), a single DreamBooth+LoRA run reached $3000$ steps in approximately $27$ minutes when running alone on the GPU, and the Textual Inversion baseline (Section~\ref{sec:ti-method}) in approximately $20$ minutes; peak GPU memory usage was approximately $25$\,GB for either method. To reduce the total wall-clock time of the full evaluation (16 training runs, generation of approximately $28{,}000$ images across both methods and all checkpoints, and the bootstrap-based computation of CLIP Score, FID, and KID), training and image generation for consecutive concepts were pipelined on the same GPU, so that a concept's images are generated while the next concept trains; running two full trainings concurrently was also tested but found to be counter-productive; on this hardware, it took longer in aggregate than running them sequentially, likely due to context-switching overhead between two large concurrent workloads, and was therefore not used for the reported results.}
 
 
